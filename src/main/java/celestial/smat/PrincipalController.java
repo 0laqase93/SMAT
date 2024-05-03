@@ -27,13 +27,13 @@ public class PrincipalController {
     @FXML
     private Circle sun;
 
-    private Circle prueba;
-
-    private Circle prueba2;
-
     private Button addButton;
 
     private Button removeButton;
+
+    private Button right;
+
+    private Button left;
 
     @FXML
     void select(Circle selected) {
@@ -48,6 +48,7 @@ public class PrincipalController {
         space.getChildren().remove(addButton);
         space.getChildren().remove(removeButton);
 
+        // Add button
         addButton = new Button();
         addButton.setFont(new Font("Monospaced Bold", 32));
         addButton.setText("+");
@@ -57,6 +58,7 @@ public class PrincipalController {
         addButton.setLayoutX(selected.getLayoutX() - selected.getRadius() - 15);
         addButton.setLayoutY(selected.getLayoutY() - selected.getRadius());
 
+        // Remove button
         removeButton = new Button();
         removeButton.setFont(new Font("Monospaced Bold", 32));
         removeButton.setText("-");
@@ -66,6 +68,10 @@ public class PrincipalController {
         removeButton.setLayoutX(selected.getLayoutX() + selected.getRadius() - 5);
         removeButton.setLayoutY(selected.getLayoutY() - selected.getRadius());
 
+        // Add events
+        addButton.setOnMouseClicked(event -> createCircle(selected));
+
+        // Add to the pane
         space.getChildren().add(addButton);
         space.getChildren().add(removeButton);
     }
@@ -75,30 +81,45 @@ public class PrincipalController {
         select(sun);
     }
 
+    void createCircle(Circle parent) {
+        Circle circle = new Circle();
+        circle.setId(Math.random() + "");
+        circle.setRadius(30);
+        circle.setLayoutX(parent.getLayoutX() + 100);
+        circle.setLayoutY(parent.getLayoutY());
+        circle.setFill(Color.BLUE);
+
+        space.getChildren().add(circle);
+
+        right = new Button();
+        right.setFont(new Font("Monospaced Bold", 32));
+        right.setText(">");
+        right.setTextFill(Color.WHITE);
+        right.setStyle("-fx-background-color: transparent;");
+        right.setPadding(new Insets(-10, 0, -7, 0));
+        right.setLayoutX(circle.getLayoutX() + circle.getRadius());
+        right.setLayoutY(circle.getLayoutY());
+
+        left = new Button();
+        left.setFont(new Font("Monospaced Bold", 32));
+        left.setText("<");
+        left.setTextFill(Color.WHITE);
+        left.setStyle("-fx-background-color: transparent;");
+        left.setPadding(new Insets(-10, 0, -7, 0));
+        left.setLayoutX(circle.getLayoutX() - circle.getRadius());
+        left.setLayoutY(circle.getLayoutY());
+
+        space.getChildren().add(right);
+        space.getChildren().add(left);
+    }
+
     @FXML
     void initialize() {
         assert sun != null : "fx:id=\"sun\" was not injected: check your FXML file 'hello-view.fxml'.";
         selected = null;
-
-
-        prueba = new Circle();
-        prueba.setRadius(60);
-        prueba.setLayoutX(100);
-        prueba.setLayoutY(100);
-        prueba.setFill(Color.BLUE);
-
-        prueba2 = new Circle();
-        prueba2.setRadius(30);
-        prueba2.setLayoutX(350);
-        prueba2.setLayoutY(350);
-        prueba2.setFill(Color.BLUE);
+        addButton = new Button();
+        removeButton = new Button();
 
         sun.setOnMouseClicked(event -> select(sun));
-        prueba.setOnMouseClicked(event -> select(prueba));
-        prueba2.setOnMouseClicked(event -> select(prueba2));
-
-
-        space.getChildren().add(prueba);
-        space.getChildren().add(prueba2);
     }
 }
