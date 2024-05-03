@@ -15,7 +15,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         String nombre = "hello-view";
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(nombre + ".fxml"));
-        scene = new Scene(fxmlLoader.load(), 512, 512);
+        scene = new Scene(fxmlLoader.load(), 1000, 700);
         stage.setTitle("SMAT");
         stage.setScene(scene);
         stage.initStyle(StageStyle.UNDECORATED);
