@@ -7,19 +7,26 @@ import java.util.ArrayList;
 
 public class Planet implements CuerpoCeleste{
     private String name;
-    private String temperature;
-    private Star star;
+    private Double temperature;
+    private Double radius;
+    private Double speed;
+    private Double density;
+    private final Star star;
+    private ArrayList<CuerpoCeleste> satellites = new ArrayList<>();
+
     private Circle circle;
-    private Ellipse orbitCircle;
-    private ArrayList<Satellite> satellites = new ArrayList<>();
+    private final Ellipse orbit;
 
     // Constructors
-    public Planet(String name, String temperature, Star star, Circle circle, Ellipse orbitCircle) {
+    public Planet(String name, Double temperature, Double radius, Double speed, Double density, Star star, Circle circle, Ellipse orbit) {
         this.name = name;
         this.temperature = temperature;
+        this.radius = radius;
+        this.speed = speed;
+        this.density = density;
         this.star = star;
         this.circle = circle;
-        this.orbitCircle = orbitCircle;
+        this.orbit = orbit;
     }
 
     // Getters
@@ -27,8 +34,20 @@ public class Planet implements CuerpoCeleste{
         return name;
     }
 
-    public String getTemperature() {
+    public Double getTemperature() {
         return temperature;
+    }
+
+    public Double getRadius() {
+        return radius;
+    }
+
+    public Double getSpeed() {
+        return speed;
+    }
+
+    public Double getDensity() {
+        return density;
     }
 
     public Star getStar() {
@@ -39,8 +58,8 @@ public class Planet implements CuerpoCeleste{
         return circle;
     }
 
-    public Ellipse getOrbitCircle() {
-        return orbitCircle;
+    public Ellipse getOrbit() {
+        return orbit;
     }
 
     // Setters
@@ -48,19 +67,23 @@ public class Planet implements CuerpoCeleste{
         this.name = name;
     }
 
-    public void setTemperature(String temperature) {
+    public void setTemperature(Double temperature) {
         this.temperature = temperature;
     }
 
-    public void setStar(Star star) {
-        this.star = star;
+    public void setRadius(Double radius) {
+        this.radius = radius;
+    }
+
+    public void setSpeed(Double speed) {
+        this.speed = speed;
+    }
+
+    public void setDensity(Double density) {
+        this.density = density;
     }
 
     public void setCircle(Circle circle) {
         this.circle = circle;
-    }
-
-    public void setOrbitCircle(Ellipse orbitCircle) {
-        this.orbitCircle = orbitCircle;
     }
 }
