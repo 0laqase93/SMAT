@@ -1,15 +1,17 @@
 package celestial.smat.Classes;
 
-public class Star {
+import javafx.scene.shape.Circle;
+
+public class Star implements CuerpoCeleste{
     private String name;
     private String temperature;
-    private Double radius;
+    private Circle circle;
 
     // Constructors
-    public Star(String name, String temperature, Double radius) {
+    public Star(String name, String temperature, Circle circle) {
         this.name = name;
         this.temperature = temperature;
-        this.radius = radius;
+        this.circle = circle;
     }
 
     // Getters
@@ -21,8 +23,8 @@ public class Star {
         return temperature;
     }
 
-    public Double getRadius() {
-        return radius;
+    public Circle getCircle() {
+        return circle;
     }
 
     // Setters
@@ -34,7 +36,7 @@ public class Star {
         this.temperature = temperature;
     }
 
-    public void setRadius(Double radius) {
-        this.radius = radius;
+    public void setCircle(Circle circle) {
+        this.circle = circle;
     }
 }

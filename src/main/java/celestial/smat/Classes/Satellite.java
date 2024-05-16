@@ -1,17 +1,21 @@
 package celestial.smat.Classes;
 
-public class Satellite {
+import javafx.scene.shape.Circle;
+
+public class Satellite implements CuerpoCeleste {
     private String name;
     private String temperature;
     private Double radius;
-    private Planet planet;
+    private Planet parent;
+    private Circle circle;
 
     // Constructors
-    public Satellite(String name, String temperature, Double radius, Planet planet) {
+    public Satellite(String name, String temperature, Double radius, Planet parent, Circle circle) {
         this.name = name;
         this.temperature = temperature;
         this.radius = radius;
-        this.planet = planet;
+        this.parent = parent;
+        this.circle = circle;
     }
 
     // Getters
@@ -28,7 +32,11 @@ public class Satellite {
     }
 
     public Planet getStar() {
-        return planet;
+        return parent;
+    }
+
+    public Circle getCircle() {
+        return circle;
     }
 
     // Setters
@@ -44,7 +52,11 @@ public class Satellite {
         this.radius = radius;
     }
 
-    public void setStar(Planet planet) {
-        this.planet = planet;
+    public void setStar(Planet parent) {
+        this.parent = parent;
+    }
+
+    public void setCircle(Circle circle) {
+        this.circle = circle;
     }
 }

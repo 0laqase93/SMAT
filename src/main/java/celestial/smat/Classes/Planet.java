@@ -1,17 +1,25 @@
 package celestial.smat.Classes;
 
-public class Planet {
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
+
+import java.util.ArrayList;
+
+public class Planet implements CuerpoCeleste{
     private String name;
     private String temperature;
-    private Double radius;
     private Star star;
+    private Circle circle;
+    private Ellipse orbitCircle;
+    private ArrayList<Satellite> satellites = new ArrayList<>();
 
     // Constructors
-    public Planet(String name, String temperature, Double radius, Star star) {
+    public Planet(String name, String temperature, Star star, Circle circle, Ellipse orbitCircle) {
         this.name = name;
         this.temperature = temperature;
-        this.radius = radius;
         this.star = star;
+        this.circle = circle;
+        this.orbitCircle = orbitCircle;
     }
 
     // Getters
@@ -23,12 +31,16 @@ public class Planet {
         return temperature;
     }
 
-    public Double getRadius() {
-        return radius;
-    }
-
     public Star getStar() {
         return star;
+    }
+
+    public Circle getCircle() {
+        return circle;
+    }
+
+    public Ellipse getOrbitCircle() {
+        return orbitCircle;
     }
 
     // Setters
@@ -40,11 +52,15 @@ public class Planet {
         this.temperature = temperature;
     }
 
-    public void setRadius(Double radius) {
-        this.radius = radius;
-    }
-
     public void setStar(Star star) {
         this.star = star;
+    }
+
+    public void setCircle(Circle circle) {
+        this.circle = circle;
+    }
+
+    public void setOrbitCircle(Ellipse orbitCircle) {
+        this.orbitCircle = orbitCircle;
     }
 }
