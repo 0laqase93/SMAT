@@ -8,33 +8,18 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import java.util.Objects;
+
 public class Info {
-    private AnchorPane infoPane;
+    private final AnchorPane infoPane;
 
-    private Circle preview;
+    private final Circle preview;
 
-    private TextField nameField;
-    private TextField temperatureField;
-    private TextField radiusField;
-    private TextField speedField;
-    private TextField densityField;
-
-    private Label temperatureUnitField;
-    private Label radiusUnitField;
-    private Label speedUnitField;
-    private Label densityUnitField;
-
-    private ImageView nameIconView;
-    private ImageView temperatureIconView;
-    private ImageView radiusIconView;
-    private ImageView speedIconView;
-    private ImageView densityIconView;
-
-    private Image nameIcon;
-    private Image temperatureIcon;
-    private Image radiusIcon;
-    private Image speedIcon;
-    private Image densityIcon;
+    private final TextField nameField;
+    private final TextField temperatureField;
+    private final TextField radiusField;
+    private final TextField speedField;
+    private final TextField densityField;
 
     public Info(AnchorPane space) {
         AnchorPane infoPane = new AnchorPane();
@@ -113,57 +98,57 @@ public class Info {
                               "-fx-border-radius: 10;" +
                               "-fx-background-radius: 10;");
 
-        temperatureUnitField = new Label();
-        temperatureUnitField.setText("k");
+        Label temperatureUnitField = new Label();
+        temperatureUnitField.setText("K");
         temperatureUnitField.setLayoutX(temperatureField.getLayoutX() + temperatureField.getPrefWidth() + (double) inset / 2);
         temperatureUnitField.setLayoutY(temperatureField.getLayoutY() + 5);
         temperatureUnitField.setStyle("-fx-text-fill: white; -fx-font-family: monospace;");
 
-        radiusUnitField = new Label();
+        Label radiusUnitField = new Label();
         radiusUnitField.setText("km");
         radiusUnitField.setLayoutX(radiusField.getLayoutX() + radiusField.getPrefWidth() + (double) inset / 2);
         radiusUnitField.setLayoutY(radiusField.getLayoutY() + 5);
         radiusUnitField.setStyle("-fx-text-fill: white; -fx-font-family: monospace");
 
-        speedUnitField = new Label();
+        Label speedUnitField = new Label();
         speedUnitField.setText("m/s");
         speedUnitField.setLayoutX(speedField.getLayoutX() + speedField.getPrefWidth() + (double) inset / 2);
         speedUnitField.setLayoutY(speedField.getLayoutY() + 5);
         speedUnitField.setStyle("-fx-text-fill: white; -fx-font-family: monospace");
 
-        densityUnitField = new Label();
+        Label densityUnitField = new Label();
         densityUnitField.setText("g/cm³");
         densityUnitField.setLayoutX(densityField.getLayoutX() + densityField.getPrefWidth() + (double) inset / 2);
         densityUnitField.setLayoutY(densityField.getLayoutY() + 5);
         densityUnitField.setStyle("-fx-text-fill: white; -fx-font-family: monospace");
 
-        nameIcon = new Image(getClass().getResourceAsStream("/celestial/smat/Images/planetaIcon.png"));
-        temperatureIcon = new Image(getClass().getResourceAsStream("/celestial/smat/Images/temperaturaIcon.png"));
-        radiusIcon = new Image(getClass().getResourceAsStream("/celestial/smat/Images/radioIcon.png"));
-        speedIcon = new Image(getClass().getResourceAsStream("/celestial/smat/Images/velocidadIcon.png"));
-        densityIcon = new Image(getClass().getResourceAsStream("/celestial/smat/Images/densidadIcon.png"));
+        Image nameIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/celestial/smat/Images/planetaIcon.png")));
+        Image temperatureIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/celestial/smat/Images/temperaturaIcon.png")));
+        Image radiusIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/celestial/smat/Images/radioIcon.png")));
+        Image speedIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/celestial/smat/Images/velocidadIcon.png")));
+        Image densityIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/celestial/smat/Images/densidadIcon.png")));
 
-        nameIconView = new ImageView();
+        ImageView nameIconView = new ImageView();
         nameIconView.setImage(nameIcon);
         nameIconView.setLayoutX(inset);
         nameIconView.setLayoutY(nameField.getLayoutY());
 
-        temperatureIconView = new ImageView();
+        ImageView temperatureIconView = new ImageView();
         temperatureIconView.setImage(temperatureIcon);
         temperatureIconView.setLayoutX(inset);
         temperatureIconView.setLayoutY(temperatureField.getLayoutY());
 
-        radiusIconView = new ImageView();
+        ImageView radiusIconView = new ImageView();
         radiusIconView.setImage(radiusIcon);
         radiusIconView.setLayoutX(inset);
         radiusIconView.setLayoutY(radiusField.getLayoutY());
 
-        speedIconView = new ImageView();
+        ImageView speedIconView = new ImageView();
         speedIconView.setImage(speedIcon);
         speedIconView.setLayoutX(inset);
         speedIconView.setLayoutY(speedField.getLayoutY());
 
-        densityIconView = new ImageView();
+        ImageView densityIconView = new ImageView();
         densityIconView.setImage(densityIcon);
         densityIconView.setLayoutX(inset);
         densityIconView.setLayoutY(densityField.getLayoutY());
@@ -176,23 +161,6 @@ public class Info {
     // Constructor
     public AnchorPane getInfoPane() {
         return infoPane;
-    }
-
-    // Getters
-    public Circle getPreview() {
-        return preview;
-    }
-
-    public TextField getNameField() {
-        return nameField;
-    }
-
-    public TextField getTemperatureField() {
-        return temperatureField;
-    }
-
-    public TextField getRadiusField() {
-        return radiusField;
     }
 
     public void select(CuerpoCeleste object) {

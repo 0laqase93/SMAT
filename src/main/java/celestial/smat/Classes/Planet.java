@@ -18,6 +18,14 @@ public class Planet implements CuerpoCeleste{
     private final Ellipse orbit;
 
     // Constructors
+    public Planet(String name, Circle circle) {
+        this.star = null;
+        this.orbit = null;
+
+        this.name = name;
+        this.circle = circle;
+    }
+
     public Planet(String name, Double temperature, Double radius, Double speed, Double density, Star star, Circle circle, Ellipse orbit) {
         this.name = name;
         this.temperature = temperature;

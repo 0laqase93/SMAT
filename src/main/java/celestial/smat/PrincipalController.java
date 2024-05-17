@@ -325,9 +325,24 @@ public class PrincipalController {
 
         // Crear el panel de información.
         infoPane = new Info(space);
+        infoPane.getInfoPane().setOnMouseClicked(event -> {
+            if (selected != null) {
+                seleccionar(selected);
+                event.consume();
+            }
+        });
 
-        // Añadir el panel al espacio.
-        space.getChildren().add(infoPane.getInfoPane());
+        // Crear menu de agregar
+        MenuAgregar menuAgregar = new MenuAgregar(space);
+        menuAgregar.getMenu().setOnMouseClicked(event -> {
+            if (selected != null) {
+                seleccionar(selected);
+                event.consume();
+            }
+        });
+
+        // Añadir los paneles al espacio.
+        space.getChildren().addAll(infoPane.getInfoPane(), menuAgregar.getMenu());
 
         // Crear animación para los botones de + y -.
         playAnimationButton.setDisable(true); // Para evitar problemas.

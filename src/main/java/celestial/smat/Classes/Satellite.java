@@ -16,6 +16,14 @@ public class Satellite implements CuerpoCeleste {
     private final Ellipse orbit;
 
     // Constructors
+    public Satellite(String name, Circle circle) {
+        this.parent = null;
+        this.orbit = null;
+
+        this.name = name;
+        this.circle = circle;
+    }
+
     public Satellite(String name, Double temperature, Double radius, Double speed, Double density, Planet parent, Circle circle, Ellipse orbit) {
         this.name = name;
         this.temperature = temperature;
