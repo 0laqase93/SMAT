@@ -111,7 +111,7 @@ public class Info {
         radiusUnitField.setStyle("-fx-text-fill: white; -fx-font-family: monospace");
 
         Label speedUnitField = new Label();
-        speedUnitField.setText("m/s");
+        speedUnitField.setText("km/s");
         speedUnitField.setLayoutX(speedField.getLayoutX() + speedField.getPrefWidth() + (double) inset / 2);
         speedUnitField.setLayoutY(speedField.getLayoutY() + 5);
         speedUnitField.setStyle("-fx-text-fill: white; -fx-font-family: monospace");

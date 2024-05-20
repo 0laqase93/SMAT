@@ -5,6 +5,7 @@ import celestial.smat.Classes.*;
 import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -34,16 +35,27 @@ public class PrincipalController {
 
     private Circle orbitModify;
 
-    private Color selectedColor;
+    static Color selectedColor;
 
     @FXML
     private AnchorPane space;
 
-    @FXML
     private Circle sun;
 
     @FXML
     private Button playAnimationButton;
+
+    public CuerpoCeleste getSelected() {
+        return selected;
+    }
+
+    public static Color getSelectedColor() {
+        return selectedColor;
+    }
+
+    public boolean getCreateMode() {
+        return this.createMode;
+    }
 
     /**
      * Función que se encarga de controlar la animación orbital.
@@ -81,7 +93,7 @@ public class PrincipalController {
      * Función que se encarga de seleccionar un cuerpo celeste.
      * @param object Objeto a seleccionar.
      */
-    void seleccionar(CuerpoCeleste object) {
+    public void seleccionar(CuerpoCeleste object) {
         // Variables para el manejo de gráficos.
         Circle selectedCircle = object.getCircle();
 
@@ -92,7 +104,6 @@ public class PrincipalController {
             }
 
             this.selected = object;
-            assert selectedCircle != null;
             selectedCircle.setStroke(selectedColor);
 
             // Borrar los botones de la anterior selección.
@@ -191,8 +202,12 @@ public class PrincipalController {
         space.getChildren().remove(removeButton);
 
         // Crear y añadir el planeta al sistema solar.
-        Planet planet = new Planet("Tierra", 287.15, 6371.0, 107280.0, 5.51, (Star) solarSystem.getStar(), circle, orbit);
+        Planet planet = new Planet(space, 1.0, "Tierra", 287.15, 6371.0, 107280.0, 5.51, (Star) solarSystem.getStar(), circle, orbit);
         solarSystem.addPlanet(planet);
+
+        // Cambiar el elemento al seleccionado.
+        selected = planet;
+        parent.setStroke(Color.WHITE);
 
         // Añadir eventos
         // Añadir evento de selección.
@@ -213,9 +228,8 @@ public class PrincipalController {
             orbit.setRadiusY(parent.getLayoutY() - orbitModify.getLayoutY());
         });
 
-        // Cambiar el elemento al seleccionado.
-        selected = planet;
-        parent.setStroke(Color.WHITE);
+        orbitModify.setOnMouseEntered(event -> orbitModify.setCursor(Cursor.HAND));
+
 
         // Crear animación
         // x = xc + a ⋅ cos(θ)
@@ -248,7 +262,7 @@ public class PrincipalController {
         );
 
         // Añadir todos los objetos al espacio.
-        space.getChildren().addAll(orbit, orbitModify, circle, finishCreate);
+        space.getChildren().addAll(orbit, orbitModify, finishCreate);
 
         // Enviar la órbita al final para evitar problemas.
         orbit.toBack();
@@ -302,17 +316,32 @@ public class PrincipalController {
     @FXML
     void initialize() {
         // Asignación de variables iniciales.
-        assert sun != null;
-        Star sunStar = new Star("Sol", 5772.0, 696340.0, 0.0, 1.41, sun);
-        solarSystem = new SolarSystem(sunStar);
+        assert playAnimationButton != null;
+
+        playAnimationButton.setOnMouseEntered(event -> playAnimationButton.setCursor(Cursor.HAND));
+
+        Star sun = new Star(space, "Sol", 5772.0, 696340.0, 0.0, 1.41);
+        solarSystem = new SolarSystem(sun);
         animation = new Timeline();
         addButton = new Button();
         removeButton = new Button();
         createMode = false;
 
         // Selección de la estrella default.
-        selected = sunStar;
+        selected = sun;
         selectedColor = Color.PURPLE;
+
+        // Crear y añadir el planeta al sistema solar.
+        Planet tierra = new Planet(space, 1.0, "Tierra", 287.15, 6371.0, 29.78, 5.51, sun, sun.getCircle(), new Ellipse());
+        solarSystem.addPlanet(tierra);
+
+        Planet marte = new Planet(space, 1.52, "Marte", 213.15, 3389.5, 47.87, 3.93, sun, sun.getCircle(), new Ellipse());
+        solarSystem.addPlanet(marte);
+
+        Planet mercurio = new Planet(space, 0.39, "Mercurio", 440.15, 2439.7, 24.07, 5.427, sun, sun.getCircle(), new Ellipse());
+        solarSystem.addPlanet(mercurio);
+
+        Planet saturno = new Planet(space, 9.58, "Saturno", )
 
         // Crear objetos.
         // Botón de finalizar edición.
@@ -322,6 +351,7 @@ public class PrincipalController {
         finishCreate.setTextFill(Color.BLACK);
         finishCreate.setLayoutX(10);
         finishCreate.setLayoutY(10);
+        finishCreate.setOnMouseEntered(event -> finishCreate.setCursor(Cursor.HAND));
 
         // Crear el panel de información.
         infoPane = new Info(space);
@@ -333,7 +363,7 @@ public class PrincipalController {
         });
 
         // Crear menu de agregar
-        MenuAgregar menuAgregar = new MenuAgregar(space);
+        AddController menuAgregar = new AddController(space);
         menuAgregar.getMenu().setOnMouseClicked(event -> {
             if (selected != null) {
                 seleccionar(selected);
@@ -372,11 +402,6 @@ public class PrincipalController {
                 deseleccionar();
                 event.consume();
             }
-        });
-
-        sun.setOnMouseClicked(event -> {
-            seleccionar(sunStar);
-            event.consume();
         });
 
         // Añadir evento al botón de creación de planeta.

@@ -1,24 +1,65 @@
 package celestial.smat.Classes;
 
+import celestial.smat.PrincipalController;
+import javafx.scene.Cursor;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 public class Star implements CuerpoCeleste{
+    private AnchorPane space;
+
     private String name;
     private Double temperature;
     private Double radius;
     private Double speed;
     private Double density;
 
+    private Double x;
+    private Double y;
+
     private Circle circle;
 
     // Constructors
-    public Star(String name, Double temperature, Double radius, Double speed, Double density, Circle circle) {
+    public Star(AnchorPane space, String name, Double temperature, Double radius, Double speed, Double density) {
+        this.space = space;
+        this.x = 0.0;
+        this.y = 0.0;
+
         this.name = name;
         this.temperature = temperature;
         this.radius = radius;
         this.speed = speed;
         this.density = density;
-        this.circle = circle;
+
+
+        this.circle = new Circle(radius * PhisicsController.ESCALARADIO * 0.03, Color.YELLOW);
+        System.out.println(this.circle.getRadius());
+        this.circle.setLayoutX(x + space.getPrefWidth() / 2);
+        this.circle.setLayoutY(y + space.getPrefHeight() / 2);
+        this.circle.setStroke(PrincipalController.getSelectedColor());
+
+        PrincipalController ps = new PrincipalController();
+
+        this.circle.setOnMouseClicked(event -> {
+            ps.seleccionar(this);
+            event.consume();
+        });
+
+        this.circle.setOnMouseEntered(event -> {
+            if (ps.getSelected() != null) {
+                if (ps.getCreateMode() && ps.getSelected() != this.circle) {
+                    this.circle.setCursor(Cursor.WAIT);
+                } else {
+                    this.circle.setCursor(Cursor.HAND);
+                }
+            } else {
+                this.circle.setCursor(Cursor.HAND);
+            }
+        });
+
+        space.getChildren().add(this.circle);
+
     }
 
     // Getters

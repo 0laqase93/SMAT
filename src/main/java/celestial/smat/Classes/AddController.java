@@ -1,7 +1,10 @@
 package celestial.smat.Classes;
 
+import celestial.smat.PrincipalController;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.scene.Cursor;
+import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -11,17 +14,22 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 
-public class MenuAgregar {
+public class AddController {
     private Boolean mostrado;
 
     private final AnchorPane menu;
+    private final AnchorPane space;
+
+    private Group addSelected;
 
     int alturaSaliente = 20;
     int cantidadMostrado = 100;
     int separacion = 60;
     private final Label flecha;
 
-    public MenuAgregar(AnchorPane space) {
+    public AddController(AnchorPane space) {
+        this.space = space;
+
         double escondidoY = space.getPrefHeight() - alturaSaliente;
         double mostradoY = escondidoY - cantidadMostrado;
 
@@ -41,6 +49,7 @@ public class MenuAgregar {
         saliente.setArcWidth(10);
         saliente.setFill(Color.valueOf("#1c2833"));
         saliente.setOnMouseClicked(event -> mostrarMenu());
+        saliente.setOnMouseEntered(event -> saliente.setCursor(Cursor.HAND));
 
         flecha = new Label();
         flecha.setText("▲");
@@ -48,6 +57,7 @@ public class MenuAgregar {
         flecha.setLayoutY(0);
         flecha.setLayoutX(menu.getPrefWidth() / 2 - 5);
         flecha.setOnMouseClicked(event -> mostrarMenu());
+        flecha.setOnMouseEntered(event -> flecha.setCursor(Cursor.HAND));
 
         Rectangle fondo = new Rectangle();
         fondo.setLayoutY(alturaSaliente);
@@ -71,6 +81,10 @@ public class MenuAgregar {
         planetLabel.setTextFill(Color.WHITE);
         planetLabel.setStyle("-fx-font-family: monospace;");
 
+        Group planetGroup = new Group(planetCircle, planetLabel);
+        planetGroup.setOnMouseEntered(event -> planetGroup.setCursor(Cursor.HAND));
+        planetGroup.setOnMouseClicked(event -> selected(planetGroup));
+
         Platform.runLater(() -> {
             planetLabel.setLayoutX(planetCircle.getLayoutX() - planetLabel.getWidth() / 2);
             planetLabel.setLayoutY(planetCircle.getLayoutY() - planetLabel.getHeight() / 2);
@@ -80,12 +94,17 @@ public class MenuAgregar {
         satelliteCircle.setStroke(Color.WHITE);
         satelliteCircle.setLayoutY(satelliteCircle.getRadius() + alturaSaliente + (fondo.getHeight() - satelliteCircle.getRadius() * 2) / 2);
         satelliteCircle.setLayoutX(planetCircle.getLayoutX() + satelliteCircle.getRadius() + separacion);
+        satelliteCircle.setOnMouseEntered(event -> satelliteCircle.setCursor(Cursor.HAND));
         Satellite satellite = new Satellite("Satélite", satelliteCircle);
 
         Label satelliteLabel = new Label();
         satelliteLabel.setText(satellite.getName());
         satelliteLabel.setTextFill(Color.WHITE);
         satelliteLabel.setStyle("-fx-font-family: monospace;");
+
+        Group satelliteGroup = new Group(satelliteCircle, satelliteLabel);
+        satelliteGroup.setOnMouseEntered(event -> satelliteGroup.setCursor(Cursor.HAND));
+        satelliteGroup.setOnMouseClicked(event -> selected(satelliteGroup));
 
         Platform.runLater(() -> {
             satelliteLabel.setLayoutX(satelliteCircle.getLayoutX() - satelliteLabel.getWidth() / 2);
@@ -95,14 +114,7 @@ public class MenuAgregar {
         opciones.add(planet);
         opciones.add(satellite);
 
-        menu.getChildren().addAll(saliente, flecha, fondo);
-
-        for (CuerpoCeleste object : opciones) {
-            menu.getChildren().add(object.getCircle());
-            object.getCircle().toFront();
-        }
-
-        menu.getChildren().addAll(planetLabel, satelliteLabel);
+        menu.getChildren().addAll(saliente, flecha, fondo, planetGroup, satelliteGroup);
     }
 
     public AnchorPane getMenu() {
@@ -116,6 +128,7 @@ public class MenuAgregar {
             flecha.setText("▲");
             transition.setToY(0);
         } else {
+            menu.toFront();
             flecha.setText("▼");
             transition.setToY(-cantidadMostrado);
         }
@@ -123,5 +136,47 @@ public class MenuAgregar {
         transition.play();
 
         mostrado = !mostrado;
+    }
+
+    public void selected(Group object) {
+        Circle circle = (Circle) object.getChildren().get(0);
+        Label label = (Label) object.getChildren().get(1);
+        if (addSelected != null) {
+            ((Circle) addSelected.getChildren().get(0)).setStroke(Color.WHITE);
+        }
+
+        addSelected = object;
+
+        ((Circle) object.getChildren().get(0)).setStroke(PrincipalController.getSelectedColor());
+
+        switch (label.getText()) {
+            case "Planeta":
+                createPlanet();
+                break;
+            case "Satélite":
+                createSatellite();
+                break;
+            case null,
+                 default:;
+        }
+    }
+
+    public void createPlanet() {
+
+        space.setOnMouseClicked(event -> {
+            Circle circle = new Circle(20, Color.DARKBLUE);
+            circle.setLayoutX(event.getX());
+            circle.setLayoutY(event.getY());
+            space.getChildren().add(circle);
+        });
+    }
+
+    public void createSatellite() {
+        space.setOnMouseClicked(event -> {
+            Circle circle = new Circle(20, Color.DARKRED);
+            circle.setLayoutX(event.getX());
+            circle.setLayoutY(event.getY());
+            space.getChildren().add(circle);
+        });
     }
 }
