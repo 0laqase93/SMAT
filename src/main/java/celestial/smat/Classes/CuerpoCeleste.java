@@ -9,6 +9,7 @@ public interface CuerpoCeleste {
     Double getRadius(); // m
     Double getSpeed(); // m/s
     Double getDensity(); // g/cm³
+    Double getMass(); // km
     Double getX();
     Double getY();
 

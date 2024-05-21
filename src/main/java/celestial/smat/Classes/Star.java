@@ -14,6 +14,7 @@ public class Star implements CuerpoCeleste{
     private Double radius;
     private Double speed;
     private Double density;
+    private Double mass;
 
     private Double x;
     private Double y;
@@ -21,19 +22,20 @@ public class Star implements CuerpoCeleste{
     private Circle circle;
 
     // Constructors
-    public Star(AnchorPane space, String name, Double temperature, Double radius, Double speed, Double density) {
+    public Star(AnchorPane space, String name, Double mass, Double temperature, Double radius, Double speed, Double density) {
         this.space = space;
         this.x = 0.0;
         this.y = 0.0;
 
         this.name = name;
+        this.mass = mass;
         this.temperature = temperature;
         this.radius = radius;
         this.speed = speed;
         this.density = density;
 
 
-        this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.YELLOW);
+        this.circle = new Circle(radius * PhisicsController.ESCALARADIO * 0.3, Color.YELLOW);
         System.out.println(this.circle.getRadius());
         this.circle.setLayoutX(x + space.getPrefWidth() / 2);
         this.circle.setLayoutY(y + space.getPrefHeight() / 2);
@@ -81,6 +83,10 @@ public class Star implements CuerpoCeleste{
 
     public Double getDensity() {
         return density;
+    }
+
+    public Double getMass() {
+        return mass;
     }
 
     public Circle getCircle() {

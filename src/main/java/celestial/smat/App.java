@@ -27,6 +27,7 @@ public class App extends Application {
         stage.show();
 
         navigationController = new NavigationController(PrincipalController.getSpace(), this.scene);
+        new PhisicsController();
         /*BackgroundImage grid = new BackgroundImage(
                 new Image(getClass().getResourceAsStream("/celestial/smat/Images/grid.png")),
                 BackgroundRepeat.REPEAT,

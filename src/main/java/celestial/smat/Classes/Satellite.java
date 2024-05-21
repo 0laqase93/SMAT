@@ -9,6 +9,7 @@ public class Satellite implements CuerpoCeleste {
     private Double radius;
     private Double speed;
     private Double density;
+    private Double mass;
 
     private Double x;
     private Double y;
@@ -57,6 +58,10 @@ public class Satellite implements CuerpoCeleste {
 
     public Double getDensity() {
         return density;
+    }
+
+    public Double getMass(){
+        return mass;
     }
 
     public CuerpoCeleste getParent() {

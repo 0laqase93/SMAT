@@ -1,6 +1,7 @@
 package celestial.smat.Classes;
 
 import celestial.smat.PrincipalController;
+import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -17,6 +18,8 @@ public class Planet implements CuerpoCeleste{
     private Double radius;
     private Double speed;
     private Double density;
+    private Double mass;
+
     private Double distanceSol;
 
     private ArrayList<CuerpoCeleste> satellites = new ArrayList<>();
@@ -25,6 +28,11 @@ public class Planet implements CuerpoCeleste{
     private Double y;
     private Double velocidadX;
     private Double velocidadY;
+
+    private Double fuerzaX;
+    private Double fuerzaY;
+
+    private ArrayList<Point2D> orbit;
 
     private Boolean vistaOrbita;
 
@@ -36,12 +44,15 @@ public class Planet implements CuerpoCeleste{
         this.circle = circle;
     }
 
-    public Planet(AnchorPane space, Double distanceSol, String name, Double temperature, Double radius, Double speed, Double density, CuerpoCeleste parent) {
+    public Planet(AnchorPane space, Double distanceSol, String name, Double mass, Double temperature, Double radius, Double speed, Double density, CuerpoCeleste parent) {
         this.space = space;
         this.x = (distanceSol * PhisicsController.UA) * PhisicsController.ESCALA + parent.getX() + parent.getCircle().getRadius();
         this.y = parent.getY();
+        this.velocidadX = 0.0;
+        this.velocidadY = speed * 2500;
 
         this.name = name;
+        this.mass = mass;
         this.temperature = temperature;
         this.radius = radius;
         this.speed = speed;
@@ -52,9 +63,10 @@ public class Planet implements CuerpoCeleste{
         circle.setLayoutY(this.y);
         circle.setStroke(Color.WHITE);
         //circle.setStroke(PrincipalController.getSelectedColor());
-        System.out.println(this.x + " " + this.y);
 
         space.getChildren().add(circle);
+
+        orbit = new ArrayList<>();
     }
 
     // Getters
@@ -76,6 +88,10 @@ public class Planet implements CuerpoCeleste{
 
     public Double getDensity() {
         return density;
+    }
+
+    public Double getMass() {
+        return mass;
     }
 
     public Circle getCircle() {
@@ -117,10 +133,74 @@ public class Planet implements CuerpoCeleste{
         this.circle = circle;
     }
 
+    public void setDistanceSol(Double distanceSol) {
+        this.distanceSol = distanceSol;
+    }
+
+    public void setVelocidadY(Double velocidadY) {
+        this.velocidadY = velocidadY;
+    }
+
     public void actualizarPosicion() {
-        Double xNueva = this.x * PhisicsController.ESCALA + space.getPrefWidth() / 2;
-        Double yNueva = this.y * PhisicsController.ESCALA + space.getPrefHeight() / 2;
+        Double fuerzaTotalX = 0.0;
+        Double fuerzaTotalY = 0.0;
+
+        Double[] fuerzas = new Double[2];
+        Double fx = 0.0;
+        Double fy = 0.0;
+        for (Planet planet : SolarSystem.planets) {
+            if (planet.equals(this)) {
+                continue;
+            }
+            fuerzas = atraccionGravitatoria(this, planet);
+            fx = fuerzas[0];
+            fy = fuerzas[1];
+            fuerzaTotalX += fx;
+            fuerzaTotalY += fy;
+        }
+        fuerzas = atraccionGravitatoria(this, SolarSystem.star);
+        fx = fuerzas[0];
+        fy = fuerzas[1];
+        fuerzaTotalX += fx;
+        fuerzaTotalY += fy;
 
 
+        // MCUA
+        // f = m * a => a = f / m
+        this.velocidadX += fuerzaTotalX / this.mass * PhisicsController.PASOTIEMPO;
+        this.velocidadY += fuerzaTotalY / this.mass * PhisicsController.PASOTIEMPO;
+
+        this.x += this.velocidadX / PhisicsController.PASOTIEMPO;
+        this.y += this.velocidadY / PhisicsController.PASOTIEMPO;
+
+        this.circle.setLayoutX(this.x);
+        this.circle.setLayoutY(this.y);
+
+        this.orbit.add(new Point2D(this.x, this.y));
+    }
+
+    public static Double[] atraccionGravitatoria(Planet planeta, CuerpoCeleste otro) {
+        Double[] resultado = new Double[2];
+
+        // Calcular distancia entre los cuerpos
+        Double distanciaX = (otro.getX() - planeta.getX()) / PhisicsController.ESCALA;
+        Double distanciaY = (otro.getY() - planeta.getY()) / PhisicsController.ESCALA;
+        Double distancia = Math.sqrt(Math.pow(distanciaX, 2) + Math.pow(distanciaY, 2));
+
+        if (otro instanceof Star) {
+            planeta.setDistanceSol(distancia);
+        }
+
+        // Fórmula de gravitación universal de Newton
+        Double fuerza = PhisicsController.G * planeta.getMass() * otro.getMass() / Math.pow(distancia, 2);
+
+        // Descomposición de fuerzas (trigonometría)
+        Double theta = Math.atan2(distanciaY, distanciaX); // Cáĺculo del ángulo
+        Double fuerzaX = Math.cos(theta) * fuerza;
+        Double fuerzaY = Math.sin(theta) * fuerza;
+        resultado[0] = fuerzaX;
+        resultado[1] = fuerzaY;
+
+        return resultado;
     }
 }

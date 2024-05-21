@@ -3,12 +3,12 @@ package celestial.smat.Classes;
 import java.util.ArrayList;
 
 public class SolarSystem {
-    private Star star;
-    private ArrayList<Planet> planets;
+    public static Star star;
+    public static ArrayList<Planet> planets;
 
     // Constructor
     public SolarSystem(Star star) {
-        this.star = star;
+        SolarSystem.star = star;
         planets = new ArrayList<>();
     }
 
@@ -23,11 +23,11 @@ public class SolarSystem {
 
     // Setters
     public void setStar(Star star) {
-        this.star = star;
+        SolarSystem.star = star;
     }
 
     public void setPlanets(ArrayList<Planet> planets) {
-        this.planets = planets;
+        SolarSystem.planets = planets;
     }
 
     // Add planet
