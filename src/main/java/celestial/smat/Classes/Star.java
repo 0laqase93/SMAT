@@ -33,7 +33,7 @@ public class Star implements CuerpoCeleste{
         this.density = density;
 
 
-        this.circle = new Circle(radius * PhisicsController.ESCALARADIO * 0.03, Color.YELLOW);
+        this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.YELLOW);
         System.out.println(this.circle.getRadius());
         this.circle.setLayoutX(x + space.getPrefWidth() / 2);
         this.circle.setLayoutY(y + space.getPrefHeight() / 2);
@@ -85,6 +85,14 @@ public class Star implements CuerpoCeleste{
 
     public Circle getCircle() {
         return circle;
+    }
+
+    public Double getY() {
+        return y + space.getPrefHeight() / 2;
+    }
+
+    public Double getX() {
+        return x + space.getPrefWidth() / 2;
     }
 
     // Setters

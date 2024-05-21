@@ -38,7 +38,9 @@ public class PrincipalController {
     static Color selectedColor;
 
     @FXML
-    private AnchorPane space;
+    private AnchorPane window;
+
+    private static AnchorPane space;
 
     private Circle sun;
 
@@ -55,6 +57,10 @@ public class PrincipalController {
 
     public boolean getCreateMode() {
         return this.createMode;
+    }
+
+    public static AnchorPane getSpace() {
+        return space;
     }
 
     /**
@@ -202,7 +208,7 @@ public class PrincipalController {
         space.getChildren().remove(removeButton);
 
         // Crear y añadir el planeta al sistema solar.
-        Planet planet = new Planet(space, 1.0, "Tierra", 287.15, 6371.0, 107280.0, 5.51, (Star) solarSystem.getStar(), circle, orbit);
+        Planet planet = new Planet(space, 1.0, "Tierra", 287.15, 6371.0, 107280.0, 5.51, (Star) solarSystem.getStar());
         solarSystem.addPlanet(planet);
 
         // Cambiar el elemento al seleccionado.
@@ -318,6 +324,12 @@ public class PrincipalController {
         // Asignación de variables iniciales.
         assert playAnimationButton != null;
 
+        space = new AnchorPane();
+        space.setPrefWidth(window.getPrefWidth());
+        space.setPrefHeight(window.getPrefHeight());
+
+        window.getChildren().add(space);
+
         playAnimationButton.setOnMouseEntered(event -> playAnimationButton.setCursor(Cursor.HAND));
 
         Star sun = new Star(space, "Sol", 5772.0, 696340.0, 0.0, 1.41);
@@ -332,16 +344,20 @@ public class PrincipalController {
         selectedColor = Color.PURPLE;
 
         // Crear y añadir el planeta al sistema solar.
-        Planet tierra = new Planet(space, 1.0, "Tierra", 287.15, 6371.0, 29.78, 5.51, sun, sun.getCircle(), new Ellipse());
+        Planet tierra = new Planet(space, 1.0, "Tierra", 287.15, 6371.0, 29.78, 5.51, sun);
         solarSystem.addPlanet(tierra);
 
-        Planet marte = new Planet(space, 1.52, "Marte", 213.15, 3389.5, 47.87, 3.93, sun, sun.getCircle(), new Ellipse());
+        Planet marte = new Planet(space, 1.52, "Marte", 213.15, 3389.5, 47.87, 3.93, sun);
         solarSystem.addPlanet(marte);
 
-        Planet mercurio = new Planet(space, 0.39, "Mercurio", 440.15, 2439.7, 24.07, 5.427, sun, sun.getCircle(), new Ellipse());
+        Planet mercurio = new Planet(space, 0.39, "Mercurio", 440.15, 2439.7, 24.07, 5.427, sun);
         solarSystem.addPlanet(mercurio);
 
-        Planet saturno = new Planet(space, 9.58, "Saturno", )
+        Planet saturno = new Planet(space, 9.58, "Saturno", 134.0, 58232.0, 9.69,  0.687, sun);
+        solarSystem.addPlanet(saturno);
+
+        Planet jupiter = new Planet(space, 5.2, "Júpiter", 165.0, 69911.0, 13.07, 1.33, sun);
+        solarSystem.addPlanet(jupiter);
 
         // Crear objetos.
         // Botón de finalizar edición.
@@ -354,7 +370,7 @@ public class PrincipalController {
         finishCreate.setOnMouseEntered(event -> finishCreate.setCursor(Cursor.HAND));
 
         // Crear el panel de información.
-        infoPane = new Info(space);
+        infoPane = new Info(window);
         infoPane.getInfoPane().setOnMouseClicked(event -> {
             if (selected != null) {
                 seleccionar(selected);
@@ -363,7 +379,7 @@ public class PrincipalController {
         });
 
         // Crear menu de agregar
-        AddController menuAgregar = new AddController(space);
+        AddController menuAgregar = new AddController(window);
         menuAgregar.getMenu().setOnMouseClicked(event -> {
             if (selected != null) {
                 seleccionar(selected);
@@ -372,7 +388,7 @@ public class PrincipalController {
         });
 
         // Añadir los paneles al espacio.
-        space.getChildren().addAll(infoPane.getInfoPane(), menuAgregar.getMenu());
+        window.getChildren().addAll(infoPane.getInfoPane(), menuAgregar.getMenu());
 
         // Crear animación para los botones de + y -.
         playAnimationButton.setDisable(true); // Para evitar problemas.
@@ -410,5 +426,6 @@ public class PrincipalController {
             event.consume();
         });
 
+        //NavigationController zoomEvent = new NavigationController(space, App.scene);
     }
 }

@@ -10,6 +10,9 @@ public class Satellite implements CuerpoCeleste {
     private Double speed;
     private Double density;
 
+    private Double x;
+    private Double y;
+
     private final CuerpoCeleste parent;
 
     private Circle circle;
@@ -66,6 +69,16 @@ public class Satellite implements CuerpoCeleste {
 
     public Ellipse getOrbit() {
         return orbit;
+    }
+
+    @Override
+    public Double getX() {
+        return x;
+    }
+
+    @Override
+    public Double getY() {
+        return y;
     }
 
     // Setters

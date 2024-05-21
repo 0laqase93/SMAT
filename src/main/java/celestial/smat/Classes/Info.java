@@ -21,16 +21,16 @@ public class Info {
     private final TextField speedField;
     private final TextField densityField;
 
-    public Info(AnchorPane space) {
+    public Info(AnchorPane window) {
         AnchorPane infoPane = new AnchorPane();
         infoPane.setPrefWidth(200);
         infoPane.setPrefHeight(270);
         infoPane.setLayoutX(10);
-        infoPane.setLayoutY((space.getPrefHeight() - infoPane.getPrefHeight())/2);
+        infoPane.setLayoutY((window.getPrefHeight() - infoPane.getPrefHeight())/2);
         infoPane.setStyle("-fx-background-color: #1c2833;" +
                           "-fx-border-radius: 10;" +
                           "-fx-background-radius: 10;" +
-                          "-fx-border-color: white");
+                          "-fx-border-color: white;");
         infoPane.setVisible(false);
 
         preview = new Circle();

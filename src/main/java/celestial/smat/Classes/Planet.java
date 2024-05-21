@@ -1,6 +1,7 @@
 package celestial.smat.Classes;
 
 import celestial.smat.PrincipalController;
+import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -18,7 +19,6 @@ public class Planet implements CuerpoCeleste{
     private Double density;
     private Double distanceSol;
 
-    private final Star star;
     private ArrayList<CuerpoCeleste> satellites = new ArrayList<>();
 
     private Double x;
@@ -29,36 +29,30 @@ public class Planet implements CuerpoCeleste{
     private Boolean vistaOrbita;
 
     private Circle circle;
-    private final Ellipse orbit;
 
     // Constructors
     public Planet(String name, Circle circle) {
-        this.star = null;
-        this.orbit = null;
-
         this.name = name;
         this.circle = circle;
     }
 
-    public Planet(AnchorPane space, Double distanceSol, String name, Double temperature, Double radius, Double speed, Double density, Star star, Circle parent, Ellipse orbit) {
+    public Planet(AnchorPane space, Double distanceSol, String name, Double temperature, Double radius, Double speed, Double density, CuerpoCeleste parent) {
         this.space = space;
-        this.x = parent.getLayoutX() + parent.getRadius() + (distanceSol * PhisicsController.UA) * PhisicsController.ESCALA;
-        this.y = parent.getLayoutY();
+        this.x = (distanceSol * PhisicsController.UA) * PhisicsController.ESCALA + parent.getX() + parent.getCircle().getRadius();
+        this.y = parent.getY();
 
         this.name = name;
         this.temperature = temperature;
         this.radius = radius;
         this.speed = speed;
         this.density = density;
-        this.star = star;
 
         this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.DARKBLUE);
         circle.setLayoutX(this.x);
         circle.setLayoutY(this.y);
-        circle.setStroke(PrincipalController.getSelectedColor());
+        circle.setStroke(Color.WHITE);
+        //circle.setStroke(PrincipalController.getSelectedColor());
         System.out.println(this.x + " " + this.y);
-
-        this.orbit = orbit;
 
         space.getChildren().add(circle);
     }
@@ -84,16 +78,18 @@ public class Planet implements CuerpoCeleste{
         return density;
     }
 
-    public Star getStar() {
-        return star;
-    }
-
     public Circle getCircle() {
         return circle;
     }
 
-    public Ellipse getOrbit() {
-        return orbit;
+    @Override
+    public Double getX() {
+        return x;
+    }
+
+    @Override
+    public Double getY() {
+        return y;
     }
 
     // Setters
