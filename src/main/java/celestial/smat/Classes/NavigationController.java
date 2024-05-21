@@ -3,9 +3,11 @@ package celestial.smat.Classes;
 import celestial.smat.PrincipalController;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 /**
  * Controlador de navegación para la interacción con la escena.
@@ -28,6 +30,7 @@ public class NavigationController {
 
         zoom();
         move();
+        addGrid();
     }
 
     /**
@@ -83,5 +86,30 @@ public class NavigationController {
                 orgSceneXY[1] = event.getSceneY();
             }
         });
+    }
+
+    public void addGrid() {
+
+        double w = space.getBoundsInLocal().getWidth();
+        double h = space.getBoundsInLocal().getHeight();
+
+        Canvas grid = new Canvas(w, h);
+
+        grid.setMouseTransparent(true);
+
+        GraphicsContext gc = grid.getGraphicsContext2D();
+
+        gc.setStroke(Color.GRAY);
+        gc.setLineWidth(1);
+
+        double offset = 50;
+        for( double i=offset; i < w; i+=offset) {
+            gc.strokeLine( i, 0, i, h);
+            gc.strokeLine( 0, i, w, i);
+        }
+
+        space.getChildren().add( grid);
+
+        grid.toBack();
     }
 }

@@ -31,7 +31,7 @@ public class SolarSystem {
     }
 
     // Add planet
-    public void addPlanet(Planet planet) {
+    public static void addPlanet(Planet planet) {
         planets.add(planet);
     }
 }

@@ -39,7 +39,7 @@ public class Star implements CuerpoCeleste{
         System.out.println(this.circle.getRadius());
         this.circle.setLayoutX(x + space.getPrefWidth() / 2);
         this.circle.setLayoutY(y + space.getPrefHeight() / 2);
-        this.circle.setStroke(PrincipalController.getSelectedColor());
+        this.circle.setStroke(Color.WHITE);
 
         PrincipalController ps = new PrincipalController();
 

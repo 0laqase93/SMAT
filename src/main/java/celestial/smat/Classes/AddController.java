@@ -18,6 +18,7 @@ public class AddController {
     private Boolean mostrado;
 
     private final AnchorPane menu;
+    private final AnchorPane window;
     private final AnchorPane space;
 
     private Group addSelected;
@@ -27,10 +28,11 @@ public class AddController {
     int separacion = 60;
     private final Label flecha;
 
-    public AddController(AnchorPane space) {
+    public AddController(AnchorPane window, AnchorPane space) {
+        this.window = window;
         this.space = space;
 
-        double escondidoY = space.getPrefHeight() - alturaSaliente;
+        double escondidoY = window.getPrefHeight() - alturaSaliente;
         double mostradoY = escondidoY - cantidadMostrado;
 
         mostrado = false;
@@ -38,7 +40,7 @@ public class AddController {
         menu = new AnchorPane();
         menu.setLayoutX(0);
         menu.setLayoutY(escondidoY);
-        menu.setPrefSize(space.getPrefWidth(), cantidadMostrado + alturaSaliente);
+        menu.setPrefSize(window.getPrefWidth(), cantidadMostrado + alturaSaliente);
 
         Rectangle saliente = new Rectangle();
         saliente.setWidth(40);
@@ -164,10 +166,8 @@ public class AddController {
     public void createPlanet() {
 
         space.setOnMouseClicked(event -> {
-            Circle circle = new Circle(20, Color.DARKBLUE);
-            circle.setLayoutX(event.getX());
-            circle.setLayoutY(event.getY());
-            space.getChildren().add(circle);
+            Planet jupiter = new Planet(space, event.getX(), event.getY(), "Júpiter", 1.90e27, 165.0, 69911.0, 0.0, 1.33);
+            SolarSystem.addPlanet(jupiter);
         });
     }
 
