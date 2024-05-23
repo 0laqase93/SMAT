@@ -54,8 +54,8 @@ public class Planet implements CuerpoCeleste{
         this.density = density;
 
         this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.DARKBLUE);
-        circle.setLayoutX(this.x);
-        circle.setLayoutY(this.y);
+        circle.setLayoutX(this.x + parent.getRadius() * PhisicsController.ESCALARADIO);
+        circle.setLayoutY(this.y + parent.getRadius() * PhisicsController.ESCALARADIO);
         circle.setStroke(Color.WHITE);
         //circle.setStroke(PrincipalController.getSelectedColor());
 
@@ -126,6 +126,14 @@ public class Planet implements CuerpoCeleste{
         return y;
     }
 
+    public Double getVelocidadX() {
+        return velocidadX;
+    }
+
+    public Double getVelocidadY() {
+        return  velocidadY;
+    }
+
     // Setters
     public void setName(String name) {
         this.name = name;
@@ -153,6 +161,10 @@ public class Planet implements CuerpoCeleste{
 
     public void setDistanceSol(Double distanceSol) {
         this.distanceSol = distanceSol;
+    }
+
+    public void setVelocidadX(Double velocidadX) {
+        this.velocidadX = velocidadX;
     }
 
     public void setVelocidadY(Double velocidadY) {
@@ -220,5 +232,10 @@ public class Planet implements CuerpoCeleste{
         resultado[1] = fuerzaY;
 
         return resultado;
+    }
+
+    public void actualizarVelocidades(Double[] velocidades) {
+        this.velocidadX += velocidades[0];
+        this.velocidadY += velocidades[1];
     }
 }

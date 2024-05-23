@@ -1,6 +1,8 @@
 package celestial.smat.Classes;
 
+import celestial.smat.PrincipalController;
 import javafx.animation.AnimationTimer;
+import javafx.scene.layout.AnchorPane;
 
 public class PhisicsController {
     public static AnimationTimer timer;
@@ -18,8 +20,22 @@ public class PhisicsController {
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                for (Planet planet : SolarSystem.planets) {
-                    planet.actualizarPosicion();
+                AnchorPane space = PrincipalController.getSpace();
+                if (!SolarSystem.planets.isEmpty()) {
+                    for (Planet planet : SolarSystem.planets) {
+                        planet.actualizarPosicion();
+                        System.out.println(planet.getCircle().getLayoutX() + " " + planet.getCircle().getLayoutY());
+                        System.out.println(space.getLayoutX() + " " + space.getLayoutY() + " " + space.getPrefWidth() + " " + space.getPrefHeight());
+                        if (space.getLayoutX() > planet.getCircle().getLayoutX()) System.out.println(planet.getCircle().getLayoutX());
+                        if (planet.getCircle().getLayoutX() <= space.getLayoutX() ||
+                                planet.getCircle().getLayoutY() <= space.getLayoutY() ||
+                                planet.getCircle().getLayoutX() + planet.getCircle().getRadius() * 2 >= space.getPrefWidth() ||
+                                planet.getCircle().getLayoutY()  + planet.getCircle().getRadius() * 2 >= space.getPrefHeight()) {
+                            space.getChildren().remove(planet.getCircle());
+                            SolarSystem.planets.remove(planet);
+                            break;
+                        }
+                    }
                 }
             }
         };
