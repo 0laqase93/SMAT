@@ -211,12 +211,8 @@ public class AddController {
             Double distanciaX = (linea.getEndX() - linea.getStartX()) / PhisicsController.ESCALA;
             Double distanciaY = (linea.getEndY() - linea.getStartY()) / PhisicsController.ESCALA;
 
-            System.out.println(distanciaX + " " + distanciaY);
-
             Double velocidadX = (distanciaX / tiempo) / (3600 * 24);
             Double velocidadY = (distanciaY / tiempo) / (3600 * 24);
-
-            System.out.println(velocidadX + " " + velocidadY);
 
             Planet planet = new Planet(space, x, y, "Júpiter", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
             SolarSystem.addPlanet(planet);

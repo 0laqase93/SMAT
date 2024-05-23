@@ -13,6 +13,7 @@ public class PhisicsController {
     static final Double PASOTIEMPO = 3600.0 * 10.75;
 
     public PhisicsController() {
+        new CollisionController();
         animacion = true;
         timer = new AnimationTimer() {
             @Override
