@@ -19,8 +19,6 @@ public class PrincipalController {
 
     private SolarSystem solarSystem;
 
-    private Timeline animation;
-
     private CuerpoCeleste selected;
 
     private Info infoPane;
@@ -41,8 +39,6 @@ public class PrincipalController {
     private AnchorPane window;
 
     private static AnchorPane space;
-
-    private Circle sun;
 
     @FXML
     private Button playAnimationButton;
@@ -69,16 +65,13 @@ public class PrincipalController {
      */
     @FXML
     void ControlarAnimacion(MouseEvent event) {
-        if (animation.getStatus() == Animation.Status.RUNNING) {
-            // En caso de que la animación esté activa
-            playAnimationButton.setText("⏵");
-            playAnimationButton.setTextFill(Color.WHITE);
-            animation.stop();
+        System.out.println("Hola");
+        if (PhisicsController.animacion) {
+            PhisicsController.animacion = false;
+            PhisicsController.timer.start();
         } else {
-            // En caso de que la animación no esté activa
-            playAnimationButton.setText("⏹");
-            playAnimationButton.setTextFill(Color.RED);
-            animation.play();
+            PhisicsController.animacion = true;
+            PhisicsController.timer.stop();
         }
     }
 
@@ -171,7 +164,6 @@ public class PrincipalController {
         Circle parent = object.getCircle();
 
         // Parar animación
-        animation.stop();
         playAnimationButton.setText("⏵");
         playAnimationButton.setTextFill(Color.WHITE);
         playAnimationButton.setDisable(true);
@@ -236,7 +228,7 @@ public class PrincipalController {
 
         orbitModify.setOnMouseEntered(event -> orbitModify.setCursor(Cursor.HAND));
 
-
+/*
         // Crear animación
         // x = xc + a ⋅ cos(θ)
         // y = yc + b ⋅ sin(θ)
@@ -265,7 +257,7 @@ public class PrincipalController {
                             angle[0] += 1.5; // Ajusta la velocidad de la órbita.
                         }
                 )
-        );
+        );*/
 
         // Añadir todos los objetos al espacio.
         space.getChildren().addAll(orbit, orbitModify, finishCreate);
@@ -330,11 +322,10 @@ public class PrincipalController {
 
         window.getChildren().add(space);
 
-        playAnimationButton.setOnMouseEntered(event -> playAnimationButton.setCursor(Cursor.HAND));
+        //playAnimationButton.setOnMouseEntered(event -> playAnimationButton.setCursor(Cursor.HAND));
 
         Star sun = new Star(space, "Sol", 1.989e30, 5772.0, 696340.0, 0.0, 1.41);
         solarSystem = new SolarSystem(sun);
-        animation = new Timeline();
         addButton = new Button();
         removeButton = new Button();
         createMode = false;
@@ -392,8 +383,8 @@ public class PrincipalController {
         window.getChildren().addAll(infoPane.getInfoPane(), menuAgregar.getMenu());
 
         // Crear animación para los botones de + y -.
-        playAnimationButton.setDisable(true); // Para evitar problemas.
-        animation.setCycleCount(Timeline.INDEFINITE);
+        playAnimationButton.setDisable(false); // Para evitar problemas.
+        /*animation.setCycleCount(Timeline.INDEFINITE);
         animation.setAutoReverse(false);
 
         animation.getKeyFrames().add(
@@ -411,7 +402,7 @@ public class PrincipalController {
                             }
                         }
                 )
-        );
+        );*/
 
         // Asignación de eventos.
         space.setOnMouseClicked(event -> {

@@ -64,18 +64,17 @@ public class Planet implements CuerpoCeleste{
         orbit = new ArrayList<>();
     }
 
-    public Planet(AnchorPane space, Double x, Double y, String name, Double mass, Double temperature, Double radius, Double speed, Double density) {
+    public Planet(AnchorPane space, Double x, Double y, String name, Double mass, Double temperature, Double radius, Double speedX, Double speedY, Double density) {
         this.space = space;
         this.x = x;
         this.y = y;
-        this.velocidadX = 0.0;
-        this.velocidadY = speed * 1000;
+        this.velocidadX = speedX * 1000;
+        this.velocidadY = speedY * 1000;
 
         this.name = name;
         this.mass = mass;
         this.temperature = temperature;
         this.radius = radius;
-        this.speed = speed;
         this.density = density;
 
         this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.DARKBLUE);
@@ -202,7 +201,6 @@ public class Planet implements CuerpoCeleste{
         Double[] resultado = new Double[2];
 
         // Calcular distancia entre los cuerpos
-        System.out.println(planet.getX() + " " + planet.getY());
         Double distanciaX = (otro.getX() - planet.getX()) / PhisicsController.ESCALA;
         Double distanciaY = (otro.getY() - planet.getY()) / PhisicsController.ESCALA;
         Double distancia = Math.sqrt(Math.pow(distanciaX, 2) + Math.pow(distanciaY, 2));

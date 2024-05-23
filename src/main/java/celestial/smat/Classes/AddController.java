@@ -9,10 +9,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AddController {
     private Boolean mostrado;
@@ -165,9 +167,8 @@ public class AddController {
 
     public void createPlanet() {
 
-        space.setOnMouseClicked(event -> {
-            Planet jupiter = new Planet(space, event.getX(), event.getY(), "Júpiter", 1.90e27, 165.0, 69911.0, 0.0, 1.33);
-            SolarSystem.addPlanet(jupiter);
+        space.setOnMousePressed(event -> {
+            movimientoLanzar(event.getX(), event.getY());
         });
     }
 
@@ -177,6 +178,48 @@ public class AddController {
             circle.setLayoutX(event.getX());
             circle.setLayoutY(event.getY());
             space.getChildren().add(circle);
+        });
+    }
+
+    public void movimientoLanzar(Double x, Double y) {
+        Circle aux = new Circle(69911.0 * PhisicsController.ESCALARADIO, Color.DARKBLUE);
+        aux.setCenterX(x);
+        aux.setCenterY(y);
+        aux.setStroke(Color.WHITE);
+
+        Line linea = new Line();
+        linea.setStroke(Color.WHITE);
+        linea.setStartX(x);
+        linea.setStartY(y);
+        linea.setEndX(x);
+        linea.setEndY(y);
+
+        space.getChildren().addAll(linea, aux);
+
+        space.setOnMouseDragged(event -> {
+            Double newX = 2 * x - event.getX();
+            Double newY = 2 * y - event.getY();
+            linea.setEndX(newX);
+            linea.setEndY(newY);
+        });
+
+        space.setOnMouseReleased(mouseEvent -> {
+            space.getChildren().remove(linea);
+            space.getChildren().remove(aux);
+
+            Double tiempo = PhisicsController.PASOTIEMPO;
+            Double distanciaX = (linea.getEndX() - linea.getStartX()) / PhisicsController.ESCALA;
+            Double distanciaY = (linea.getEndY() - linea.getStartY()) / PhisicsController.ESCALA;
+
+            System.out.println(distanciaX + " " + distanciaY);
+
+            Double velocidadX = (distanciaX / tiempo) / (3600 * 24);
+            Double velocidadY = (distanciaY / tiempo) / (3600 * 24);
+
+            System.out.println(velocidadX + " " + velocidadY);
+
+            Planet planet = new Planet(space, x, y, "Júpiter", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
+            SolarSystem.addPlanet(planet);
         });
     }
 }
