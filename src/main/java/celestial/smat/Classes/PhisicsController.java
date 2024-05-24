@@ -5,6 +5,7 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.layout.AnchorPane;
 
 public class PhisicsController {
+    private final boolean fisicasActivadas = true;
     public static AnimationTimer timer;
     public static Boolean animacion;
 
@@ -15,30 +16,30 @@ public class PhisicsController {
     static final Double PASOTIEMPO = 3600.0 * 10.75;
 
     public PhisicsController() {
-        new CollisionController();
-        animacion = true;
-        timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                AnchorPane space = PrincipalController.getSpace();
-                if (!SolarSystem.planets.isEmpty()) {
-                    for (Planet planet : SolarSystem.planets) {
-                        planet.actualizarPosicion();
-                        System.out.println(planet.getCircle().getLayoutX() + " " + planet.getCircle().getLayoutY());
-                        System.out.println(space.getLayoutX() + " " + space.getLayoutY() + " " + space.getPrefWidth() + " " + space.getPrefHeight());
-                        if (space.getLayoutX() > planet.getCircle().getLayoutX()) System.out.println(planet.getCircle().getLayoutX());
-                        if (planet.getCircle().getLayoutX() <= space.getLayoutX() ||
-                                planet.getCircle().getLayoutY() <= space.getLayoutY() ||
-                                planet.getCircle().getLayoutX() + planet.getCircle().getRadius() * 2 >= space.getPrefWidth() ||
-                                planet.getCircle().getLayoutY()  + planet.getCircle().getRadius() * 2 >= space.getPrefHeight()) {
-                            space.getChildren().remove(planet.getCircle());
-                            SolarSystem.planets.remove(planet);
-                            break;
+        if (fisicasActivadas) {
+            new CollisionController();
+            animacion = true;
+            timer = new AnimationTimer() {
+                @Override
+                public void handle(long now) {
+                    AnchorPane space = PrincipalController.getSpace();
+                    if (!SolarSystem.cuerposCeleste.isEmpty()) {
+                        for (CuerpoCeleste cuerpoCeleste : SolarSystem.cuerposCeleste) {
+                            cuerpoCeleste.actualizarPosicion();
+                            if (space.getLayoutX() > cuerpoCeleste.getCircle().getLayoutX()) System.out.println(cuerpoCeleste.getCircle().getLayoutX());
+                            if (cuerpoCeleste.getCircle().getLayoutX() <= space.getLayoutX() ||
+                                    cuerpoCeleste.getCircle().getLayoutY() <= space.getLayoutY() ||
+                                    cuerpoCeleste.getCircle().getLayoutX() + cuerpoCeleste.getCircle().getRadius() * 2 >= space.getPrefWidth() ||
+                                    cuerpoCeleste.getCircle().getLayoutY()  + cuerpoCeleste.getCircle().getRadius() * 2 >= space.getPrefHeight()) {
+                                space.getChildren().remove(cuerpoCeleste.getCircle());
+                                SolarSystem.cuerposCeleste.remove(cuerpoCeleste);
+                                break;
+                            }
                         }
                     }
                 }
-            }
-        };
-        timer.start();
+            };
+            timer.start();
+        }
     }
 }

@@ -201,7 +201,7 @@ public class PrincipalController {
 
         // Crear y añadir el planeta al sistema solar.
         Planet planet = new Planet(space, 1.0, "Tierra", 5.972e24, 287.15, 6371.0, 107280.0, 5.51, (Star) solarSystem.getStar());
-        solarSystem.addPlanet(planet);
+        solarSystem.addCuerpoCeleste(planet);
 
         // Cambiar el elemento al seleccionado.
         selected = planet;
@@ -305,20 +305,18 @@ public class PrincipalController {
         selectedColor = Color.PURPLE;
 
         // Crear y añadir el planeta al sistema solar.
+
         Planet tierra = new Planet(space, 1.0, "Tierra", 5.97e24, 287.15, 6371.0, 29.78, 5.51, sun);
-        solarSystem.addPlanet(tierra);
+        solarSystem.addCuerpoCeleste(tierra);
 
-        /*Planet marte = new Planet(space, 1.524, "Marte", 6.39e23, 213.15, 3389.5, 24.08, 3.93, sun);
-        solarSystem.addPlanet(marte);
-
-        Planet mercurio = new Planet(space, 0.387, "Mercurio", 3.30e23, 440.15, 2439.7, 47.40, 5.427, sun);
-        solarSystem.addPlanet(mercurio);
+        Planet marte = new Planet(space, 1.524, "Marte", 6.39e23, 213.15, 3389.5, 24.08, 3.93, sun);
+        solarSystem.addCuerpoCeleste(marte);
 
         Planet saturno = new Planet(space, 9.58, "Saturno", 5.68e26, 134.0, 58232.0, 9.69,  0.687, sun);
-        solarSystem.addPlanet(saturno);
+        solarSystem.addCuerpoCeleste(saturno);
 
         Planet jupiter = new Planet(space, 5.2, "Júpiter", 1.90e27, 165.0, 69911.0, 13.07, 1.33, sun);
-        solarSystem.addPlanet(jupiter);*/
+        solarSystem.addCuerpoCeleste(jupiter);
 
         // Crear objetos.
         // Botón de finalizar edición.

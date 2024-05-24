@@ -12,6 +12,12 @@ public interface CuerpoCeleste {
     Double getMass(); // km
     Double getX();
     Double getY();
+    Double getVelocidadX();
+    Double getVelocidadY();
+    void setVelocidadX(Double velocidad);
+    void setVelocidadY(Double velocidad);
+    void actualizarMasa(Double masa);
+    void actualizarPosicion();
 
 
     Circle getCircle();

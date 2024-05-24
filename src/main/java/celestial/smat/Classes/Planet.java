@@ -20,16 +20,10 @@ public class Planet implements CuerpoCeleste{
     private Double density;
     private Double mass;
 
-    private Double distanceSol;
-
-    private ArrayList<CuerpoCeleste> satellites = new ArrayList<>();
-
     private Double x;
     private Double y;
     private Double velocidadX;
     private Double velocidadY;
-
-    private ArrayList<Point2D> orbit;
 
     private Circle circle;
 
@@ -54,14 +48,11 @@ public class Planet implements CuerpoCeleste{
         this.density = density;
 
         this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.DARKBLUE);
-        circle.setLayoutX(this.x + parent.getRadius() * PhisicsController.ESCALARADIO);
-        circle.setLayoutY(this.y + parent.getRadius() * PhisicsController.ESCALARADIO);
+        circle.setLayoutX(this.x + parent.getCircle().getRadius());
+        circle.setLayoutY(this.y);
         circle.setStroke(Color.WHITE);
-        //circle.setStroke(PrincipalController.getSelectedColor());
 
         space.getChildren().add(circle);
-
-        orbit = new ArrayList<>();
     }
 
     public Planet(AnchorPane space, Double x, Double y, String name, Double mass, Double temperature, Double radius, Double speedX, Double speedY, Double density) {
@@ -83,8 +74,6 @@ public class Planet implements CuerpoCeleste{
         circle.setStroke(Color.WHITE);
 
         space.getChildren().add(circle);
-
-        orbit = new ArrayList<>();
     }
 
     // Getters
@@ -139,6 +128,10 @@ public class Planet implements CuerpoCeleste{
         this.name = name;
     }
 
+    public void setMass(Double mass) {
+        this.mass = mass;
+    }
+
     public void setTemperature(Double temperature) {
         this.temperature = temperature;
     }
@@ -159,10 +152,6 @@ public class Planet implements CuerpoCeleste{
         this.circle = circle;
     }
 
-    public void setDistanceSol(Double distanceSol) {
-        this.distanceSol = distanceSol;
-    }
-
     public void setVelocidadX(Double velocidadX) {
         this.velocidadX = velocidadX;
     }
@@ -178,11 +167,11 @@ public class Planet implements CuerpoCeleste{
         Double[] fuerzas = new Double[2];
         Double fx = 0.0;
         Double fy = 0.0;
-        for (Planet planet : SolarSystem.planets) {
-            if (planet.equals(this)) {
+        for (CuerpoCeleste CuerpoCeleste : SolarSystem.cuerposCeleste) {
+            if (CuerpoCeleste.equals(this)) {
                 continue;
             }
-            fuerzas = atraccionGravitatoria(this, planet);
+            fuerzas = atraccionGravitatoria(this, CuerpoCeleste);
             fx = fuerzas[0];
             fy = fuerzas[1];
             fuerzaTotalX += fx;
@@ -196,17 +185,17 @@ public class Planet implements CuerpoCeleste{
 
 
         // Cálculo de la aceleración
-        // f = m * a -> a = f / m
+        // f = m * a > a = f / m
         this.velocidadX += fuerzaTotalX / this.mass * PhisicsController.PASOTIEMPO;
         this.velocidadY += fuerzaTotalY / this.mass * PhisicsController.PASOTIEMPO;
 
         this.x += this.velocidadX / PhisicsController.PASOTIEMPO;
         this.y += this.velocidadY / PhisicsController.PASOTIEMPO;
 
+
+
         this.circle.setLayoutX(this.x);
         this.circle.setLayoutY(this.y);
-
-        this.orbit.add(new Point2D(this.x, this.y));
     }
 
     public static Double[] atraccionGravitatoria(Planet planet, CuerpoCeleste otro) {
@@ -216,10 +205,6 @@ public class Planet implements CuerpoCeleste{
         Double distanciaX = (otro.getX() - planet.getX()) / PhisicsController.ESCALA;
         Double distanciaY = (otro.getY() - planet.getY()) / PhisicsController.ESCALA;
         Double distancia = Math.sqrt(Math.pow(distanciaX, 2) + Math.pow(distanciaY, 2));
-
-        if (otro instanceof Star) {
-            planet.setDistanceSol(distancia);
-        }
 
         // Fórmula de gravitación universal de Newton
         Double fuerza = PhisicsController.G * planet.getMass() * otro.getMass() / Math.pow(distancia, 2);
@@ -238,4 +223,12 @@ public class Planet implements CuerpoCeleste{
         this.velocidadX += velocidades[0];
         this.velocidadY += velocidades[1];
     }
+
+    public void actualizarMasa(Double masa) {
+        this.mass += masa;
+        Double densidadKgM3 = this.density * 1000; // Convertir densidad de g/cm^3 a kg/m^3
+        this.radius = Math.pow((3 * this.mass) / (4 * Math.PI * densidadKgM3), 1.0 / 3.0) / 1000; // Convertir el radio a kilómetros
+        this.circle.setRadius(this.radius * PhisicsController.ESCALARADIO);
+    }
+
 }

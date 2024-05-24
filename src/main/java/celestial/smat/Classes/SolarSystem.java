@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 public class SolarSystem {
     public static Star star;
-    public static ArrayList<Planet> planets;
+    public static ArrayList<CuerpoCeleste> cuerposCeleste;
 
     // Constructor
     public SolarSystem(Star star) {
         SolarSystem.star = star;
-        planets = new ArrayList<>();
+        cuerposCeleste = new ArrayList<>();
     }
 
     // Getters
@@ -17,8 +17,8 @@ public class SolarSystem {
         return star;
     }
 
-    public ArrayList<Planet> getPlanets() {
-        return planets;
+    public ArrayList<CuerpoCeleste> getPlanets() {
+        return cuerposCeleste;
     }
 
     // Setters
@@ -26,12 +26,12 @@ public class SolarSystem {
         SolarSystem.star = star;
     }
 
-    public void setPlanets(ArrayList<Planet> planets) {
-        SolarSystem.planets = planets;
+    public void setPlanets(ArrayList<CuerpoCeleste> cuerposCeleste) {
+        SolarSystem.cuerposCeleste = cuerposCeleste;
     }
 
     // Add planet
-    public static void addPlanet(Planet planet) {
-        planets.add(planet);
+    public static void addCuerpoCeleste(CuerpoCeleste cuerpoCeleste) {
+        cuerposCeleste.add(cuerpoCeleste);
     }
 }

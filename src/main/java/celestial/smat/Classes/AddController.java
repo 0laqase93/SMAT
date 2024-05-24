@@ -166,22 +166,23 @@ public class AddController {
     }
 
     public void createPlanet() {
-
         space.setOnMousePressed(event -> {
-            movimientoLanzar(event.getX(), event.getY());
+            movimientoLanzar(event.getX(), event.getY(), "Planet");
         });
     }
 
     public void createSatellite() {
         space.setOnMouseClicked(event -> {
-            Circle circle = new Circle(20, Color.DARKRED);
-            circle.setLayoutX(event.getX());
-            circle.setLayoutY(event.getY());
-            space.getChildren().add(circle);
+            if (!event.isControlDown()) {
+                Circle circle = new Circle(20, Color.DARKRED);
+                circle.setLayoutX(event.getX());
+                circle.setLayoutY(event.getY());
+                space.getChildren().add(circle);
+            }
         });
     }
 
-    public void movimientoLanzar(Double x, Double y) {
+    public void movimientoLanzar(Double x, Double y, String tipo) {
         Circle aux = new Circle(69911.0 * PhisicsController.ESCALARADIO, Color.DARKBLUE);
         aux.setCenterX(x);
         aux.setCenterY(y);
@@ -197,25 +198,34 @@ public class AddController {
         space.getChildren().addAll(linea, aux);
 
         space.setOnMouseDragged(event -> {
-            Double newX = 2 * x - event.getX();
-            Double newY = 2 * y - event.getY();
-            linea.setEndX(newX);
-            linea.setEndY(newY);
+            if (!event.isControlDown()) {
+                Double newX = 2 * x - event.getX();
+                Double newY = 2 * y - event.getY();
+                linea.setEndX(newX);
+                linea.setEndY(newY);
+            }
         });
 
-        space.setOnMouseReleased(mouseEvent -> {
-            space.getChildren().remove(linea);
-            space.getChildren().remove(aux);
+        space.setOnMouseReleased(event -> {
+            if (!event.isControlDown()) {
+                space.getChildren().remove(linea);
+                space.getChildren().remove(aux);
 
-            Double tiempo = PhisicsController.PASOTIEMPO;
-            Double distanciaX = (linea.getEndX() - linea.getStartX()) / PhisicsController.ESCALA;
-            Double distanciaY = (linea.getEndY() - linea.getStartY()) / PhisicsController.ESCALA;
+                Double tiempo = PhisicsController.PASOTIEMPO;
+                Double distanciaX = (linea.getEndX() - linea.getStartX()) / PhisicsController.ESCALA;
+                Double distanciaY = (linea.getEndY() - linea.getStartY()) / PhisicsController.ESCALA;
 
-            Double velocidadX = (distanciaX / tiempo) / (3600 * 24);
-            Double velocidadY = (distanciaY / tiempo) / (3600 * 24);
+                Double velocidadX = (distanciaX / tiempo) / (3600 * 24);
+                Double velocidadY = (distanciaY / tiempo) / (3600 * 24);
 
-            Planet planet = new Planet(space, x, y, "Júpiter", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
-            SolarSystem.addPlanet(planet);
+                if (tipo.equals("Planet")) {
+                    Planet planet = new Planet(space, x, y, "Planet", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
+                    SolarSystem.addCuerpoCeleste(planet);
+                } else if (tipo.equals("Satellite")) {
+                    Satellite satellite = new Satellite(space, x, y, "Planet", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
+                    SolarSystem.addCuerpoCeleste(satellite);
+                }
+            }
         });
     }
 }
