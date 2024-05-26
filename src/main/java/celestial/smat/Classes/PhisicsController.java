@@ -11,9 +11,9 @@ public class PhisicsController {
 
     static final Double UA = 149597870.7 * 1000; // Unidad astronómica (Distancia entre el sol y la tierra en km) en m
     static final Double G = 6.67430e-11; // Constante de gravitación universal en m3⋅kg−1⋅s−2
-    static final Double ESCALA = 100 / UA; // 1UA = 100 píxeles en la pantalla
-    static final Double ESCALARADIO = 0.3e-3;
-    static final Double PASOTIEMPO = 3600.0 * 10.75;
+    static final Double ESCALA = 200 / UA; // 1UA = 100 píxeles en la pantalla
+    static final Double ESCALARADIO = 0.4e-3;
+    static final Double PASOTIEMPO = 3600.0 * 5.3;
 
     public PhisicsController() {
         if (fisicasActivadas) {
@@ -33,7 +33,7 @@ public class PhisicsController {
                                     cuerpoCeleste.getCircle().getLayoutY()  + cuerpoCeleste.getCircle().getRadius() * 2 >= space.getPrefHeight()) {
                                 space.getChildren().remove(cuerpoCeleste.getCircle());
                                 SolarSystem.cuerposCeleste.remove(cuerpoCeleste);
-                                break;
+                                return;
                             }
                         }
                     }

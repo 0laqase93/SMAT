@@ -14,16 +14,14 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class AddController {
     private Boolean mostrado;
 
     private final AnchorPane menu;
-    private final AnchorPane window;
     private final AnchorPane space;
 
-    private Group addSelected;
+    private Group selected;
 
     int alturaSaliente = 20;
     int cantidadMostrado = 100;
@@ -31,11 +29,9 @@ public class AddController {
     private final Label flecha;
 
     public AddController(AnchorPane window, AnchorPane space) {
-        this.window = window;
         this.space = space;
 
         double escondidoY = window.getPrefHeight() - alturaSaliente;
-        double mostradoY = escondidoY - cantidadMostrado;
 
         mostrado = false;
 
@@ -129,8 +125,15 @@ public class AddController {
         TranslateTransition transition = new TranslateTransition(Duration.millis(500), menu);
 
         if (mostrado) {
+            if (selected != null) {
+                ((Circle) selected.getChildren().getFirst()).setStroke(Color.WHITE);
+            }
+            selected = null;
             flecha.setText("▲");
             transition.setToY(0);
+            space.setOnMousePressed(null);
+            space.setOnMouseDragged(null);
+            space.setOnMouseReleased(null);
         } else {
             menu.toFront();
             flecha.setText("▼");
@@ -145,87 +148,105 @@ public class AddController {
     public void selected(Group object) {
         Circle circle = (Circle) object.getChildren().get(0);
         Label label = (Label) object.getChildren().get(1);
-        if (addSelected != null) {
-            ((Circle) addSelected.getChildren().get(0)).setStroke(Color.WHITE);
-        }
+        if (selected != null) {
+            ((Circle) selected.getChildren().getFirst()).setStroke(Color.WHITE);
+            if (selected == object) selected = null;
+            else {
+                selected = object;
+                circle.setStroke(PrincipalController.getSelectedColor());
 
-        addSelected = object;
+                switch (label.getText()) {
+                    case "Planeta":
+                        createPlanet();
+                        break;
+                    case "Satélite":
+                        createSatellite();
+                        break;
+                    case null,
+                         default:;
+                }
+            }
+        } else {
+            selected = object;
+            circle.setStroke(PrincipalController.getSelectedColor());
 
-        ((Circle) object.getChildren().get(0)).setStroke(PrincipalController.getSelectedColor());
-
-        switch (label.getText()) {
-            case "Planeta":
-                createPlanet();
-                break;
-            case "Satélite":
-                createSatellite();
-                break;
-            case null,
-                 default:;
+            switch (label.getText()) {
+                case "Planeta":
+                    createPlanet();
+                    break;
+                case "Satélite":
+                    createSatellite();
+                    break;
+                case null,
+                     default:;
+            }
         }
     }
 
     public void createPlanet() {
         space.setOnMousePressed(event -> {
-            movimientoLanzar(event.getX(), event.getY(), "Planet");
+            if (!event.isControlDown()) {
+                movimientoLanzar(event.getX(), event.getY(), "Planet");
+            }
         });
     }
 
     public void createSatellite() {
-        space.setOnMouseClicked(event -> {
+        space.setOnMousePressed(event -> {
             if (!event.isControlDown()) {
-                Circle circle = new Circle(20, Color.DARKRED);
-                circle.setLayoutX(event.getX());
-                circle.setLayoutY(event.getY());
-                space.getChildren().add(circle);
+                movimientoLanzar(event.getX(), event.getY(), "Satellite");
             }
         });
     }
 
     public void movimientoLanzar(Double x, Double y, String tipo) {
-        Circle aux = new Circle(69911.0 * PhisicsController.ESCALARADIO, Color.DARKBLUE);
-        aux.setCenterX(x);
-        aux.setCenterY(y);
-        aux.setStroke(Color.WHITE);
+        if (selected != null) {
+            Circle aux = new Circle(69911.0 * PhisicsController.ESCALARADIO);
+            if (tipo.equals("Planet")) aux.setFill(Color.DARKBLUE);
+            else if (tipo.equals("Satellite")) aux.setFill(Color.DARKRED);
+            aux.setCenterX(x);
+            aux.setCenterY(y);
+            aux.setStroke(Color.WHITE);
 
-        Line linea = new Line();
-        linea.setStroke(Color.WHITE);
-        linea.setStartX(x);
-        linea.setStartY(y);
-        linea.setEndX(x);
-        linea.setEndY(y);
+            Line linea = new Line();
+            linea.setStroke(Color.WHITE);
+            linea.setStartX(x);
+            linea.setStartY(y);
+            linea.setEndX(x);
+            linea.setEndY(y);
 
-        space.getChildren().addAll(linea, aux);
+            space.getChildren().addAll(linea, aux);
 
-        space.setOnMouseDragged(event -> {
-            if (!event.isControlDown()) {
-                Double newX = 2 * x - event.getX();
-                Double newY = 2 * y - event.getY();
-                linea.setEndX(newX);
-                linea.setEndY(newY);
-            }
-        });
-
-        space.setOnMouseReleased(event -> {
-            if (!event.isControlDown()) {
-                space.getChildren().remove(linea);
-                space.getChildren().remove(aux);
-
-                Double tiempo = PhisicsController.PASOTIEMPO;
-                Double distanciaX = (linea.getEndX() - linea.getStartX()) / PhisicsController.ESCALA;
-                Double distanciaY = (linea.getEndY() - linea.getStartY()) / PhisicsController.ESCALA;
-
-                Double velocidadX = (distanciaX / tiempo) / (3600 * 24);
-                Double velocidadY = (distanciaY / tiempo) / (3600 * 24);
-
-                if (tipo.equals("Planet")) {
-                    Planet planet = new Planet(space, x, y, "Planet", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
-                    SolarSystem.addCuerpoCeleste(planet);
-                } else if (tipo.equals("Satellite")) {
-                    Satellite satellite = new Satellite(space, x, y, "Planet", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
-                    SolarSystem.addCuerpoCeleste(satellite);
+            space.setOnMouseDragged(event -> {
+                if (!event.isControlDown()) {
+                    Double newX = 2 * x - event.getX();
+                    Double newY = 2 * y - event.getY();
+                    linea.setEndX(newX);
+                    linea.setEndY(newY);
                 }
-            }
-        });
+            });
+
+            space.setOnMouseReleased(event -> {
+                if (!event.isControlDown()) {
+                    space.getChildren().remove(linea);
+                    space.getChildren().remove(aux);
+
+                    Double tiempo = PhisicsController.PASOTIEMPO;
+                    Double distanciaX = (linea.getEndX() - linea.getStartX()) / PhisicsController.ESCALA;
+                    Double distanciaY = (linea.getEndY() - linea.getStartY()) / PhisicsController.ESCALA;
+
+                    Double velocidadX = (distanciaX / tiempo) / (3600 * 24);
+                    Double velocidadY = (distanciaY / tiempo) / (3600 * 24);
+
+                    if (tipo.equals("Planet")) {
+                        Planet planet = new Planet(space, x, y, "Planet", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
+                        SolarSystem.addCuerpoCeleste(planet);
+                    } else if (tipo.equals("Satellite")) {
+                        Satellite satellite = new Satellite(space, x, y, "Planet", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
+                        SolarSystem.addCuerpoCeleste(satellite);
+                    }
+                }
+            });
+        }
     }
 }

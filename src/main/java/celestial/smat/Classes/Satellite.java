@@ -1,5 +1,7 @@
 package celestial.smat.Classes;
 
+import celestial.smat.PrincipalController;
+import javafx.scene.Cursor;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -11,7 +13,6 @@ public class Satellite implements CuerpoCeleste {
     private String name;
     private Double temperature;
     private Double radius;
-    private Double speed;
     private Double density;
     private Double mass;
 
@@ -39,7 +40,6 @@ public class Satellite implements CuerpoCeleste {
         this.mass = mass;
         this.temperature = temperature;
         this.radius = radius;
-        this.speed = speed;
         this.density = density;
 
         this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.DARKBLUE);
@@ -48,6 +48,8 @@ public class Satellite implements CuerpoCeleste {
         circle.setStroke(Color.WHITE);
 
         space.getChildren().add(circle);
+
+        asignarEventos();
     }
 
     public Satellite(AnchorPane space, Double x, Double y, String name, Double mass, Double temperature, Double radius, Double speedX, Double speedY, Double density) {
@@ -63,12 +65,23 @@ public class Satellite implements CuerpoCeleste {
         this.radius = radius;
         this.density = density;
 
-        this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.DARKBLUE);
+        this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.DARKRED);
         circle.setLayoutX(this.x);
         circle.setLayoutY(this.y);
         circle.setStroke(Color.WHITE);
 
         space.getChildren().add(circle);
+
+        asignarEventos();
+    }
+
+    public void asignarEventos() {
+        circle.setOnMouseClicked(event -> {
+            PrincipalController.seleccionar(this);
+            event.consume();
+        });
+
+        circle.setOnMouseEntered(event -> circle.setCursor(Cursor.HAND));
     }
 
     // Getters
@@ -84,8 +97,8 @@ public class Satellite implements CuerpoCeleste {
         return radius;
     }
 
-    public Double getSpeed() {
-        return speed;
+    public Double[] getSpeed() {
+        return new Double[]{velocidadX, velocidadY};
     }
 
     public Double getDensity() {
@@ -133,10 +146,6 @@ public class Satellite implements CuerpoCeleste {
 
     public void setRadius(Double radius) {
         this.radius = radius;
-    }
-
-    public void setSpeed(Double speed) {
-        this.speed = speed;
     }
 
     public void setDensity(Double density) {

@@ -2,6 +2,7 @@ package celestial.smat.Classes;
 
 import celestial.smat.PrincipalController;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -16,7 +17,6 @@ public class Planet implements CuerpoCeleste{
     private String name;
     private Double temperature;
     private Double radius;
-    private Double speed;
     private Double density;
     private Double mass;
 
@@ -44,7 +44,6 @@ public class Planet implements CuerpoCeleste{
         this.mass = mass;
         this.temperature = temperature;
         this.radius = radius;
-        this.speed = speed;
         this.density = density;
 
         this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.DARKBLUE);
@@ -53,6 +52,8 @@ public class Planet implements CuerpoCeleste{
         circle.setStroke(Color.WHITE);
 
         space.getChildren().add(circle);
+
+        asignarEventos();
     }
 
     public Planet(AnchorPane space, Double x, Double y, String name, Double mass, Double temperature, Double radius, Double speedX, Double speedY, Double density) {
@@ -74,6 +75,17 @@ public class Planet implements CuerpoCeleste{
         circle.setStroke(Color.WHITE);
 
         space.getChildren().add(circle);
+
+        asignarEventos();
+    }
+
+    public void asignarEventos() {
+        circle.setOnMouseClicked(event -> {
+            PrincipalController.seleccionar(this);
+            event.consume();
+        });
+
+        circle.setOnMouseEntered(event -> circle.setCursor(Cursor.HAND));
     }
 
     // Getters
@@ -89,8 +101,8 @@ public class Planet implements CuerpoCeleste{
         return radius;
     }
 
-    public Double getSpeed() {
-        return speed;
+    public Double[] getSpeed() {
+        return new Double[]{velocidadX, velocidadY};
     }
 
     public Double getDensity() {
@@ -138,14 +150,21 @@ public class Planet implements CuerpoCeleste{
 
     public void setRadius(Double radius) {
         this.radius = radius;
-    }
-
-    public void setSpeed(Double speed) {
-        this.speed = speed;
+        circle.setRadius(radius * PhisicsController.ESCALARADIO);
     }
 
     public void setDensity(Double density) {
         this.density = density;
+        // Cálculo del radio usando la fórmula R = (3M / 4πρ)^(1/3)
+        // Convertir densidad de g/cm³ a kg/m³
+        double densityInKgPerM3 = density * 1000;
+
+        // Calcular el radio en metros
+        double radiusInMeters = Math.cbrt((3 * mass) / (4 * Math.PI * densityInKgPerM3));
+
+        // Convertir el radio a kilómetros
+        double radiusInKm = radiusInMeters / 1000;
+        setRadius(radiusInKm);
     }
 
     public void setCircle(Circle circle) {
@@ -191,8 +210,6 @@ public class Planet implements CuerpoCeleste{
 
         this.x += this.velocidadX / PhisicsController.PASOTIEMPO;
         this.y += this.velocidadY / PhisicsController.PASOTIEMPO;
-
-
 
         this.circle.setLayoutX(this.x);
         this.circle.setLayoutY(this.y);

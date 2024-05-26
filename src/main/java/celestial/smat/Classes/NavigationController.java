@@ -102,7 +102,7 @@ public class NavigationController {
         gc.setStroke(Color.GRAY);
         gc.setLineWidth(1);
 
-        double offset = 50;
+        double offset = 100;
         for( double i=offset; i < w; i+=offset) {
             gc.strokeLine( i, 0, i, h);
             gc.strokeLine( 0, i, w, i);

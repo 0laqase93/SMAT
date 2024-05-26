@@ -7,7 +7,7 @@ public interface CuerpoCeleste {
     String getName();
     Double getTemperature(); // k
     Double getRadius(); // m
-    Double getSpeed(); // m/s
+    Double[] getSpeed(); // m/s
     Double getDensity(); // g/cm³
     Double getMass(); // km
     Double getX();
@@ -17,8 +17,11 @@ public interface CuerpoCeleste {
     void setVelocidadX(Double velocidad);
     void setVelocidadY(Double velocidad);
     void actualizarMasa(Double masa);
+    void setName(String name);
+    void setTemperature(Double temperature);
+    void setRadius(Double radius);
+    void setDensity(Double density);
     void actualizarPosicion();
-
 
     Circle getCircle();
 

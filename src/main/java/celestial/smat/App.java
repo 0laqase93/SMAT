@@ -24,18 +24,8 @@ public class App extends Application {
         //stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
 
-        navigationController = new NavigationController(PrincipalController.getSpace(), this.scene);
+        navigationController = new NavigationController(PrincipalController.getSpace(), scene);
         new PhisicsController();
-        /*BackgroundImage grid = new BackgroundImage(
-                new Image(getClass().getResourceAsStream("/celestial/smat/Images/grid.png")),
-                BackgroundRepeat.REPEAT,
-                BackgroundRepeat.REPEAT,
-                BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT
-        );
-        Background background = new Background(grid);
-        PrincipalController.getSpace().setBackground(background);*/
-
     }
 
     static void setScene(String nombre) throws IOException {

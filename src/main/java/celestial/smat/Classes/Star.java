@@ -22,7 +22,7 @@ public class Star implements CuerpoCeleste{
     private Circle circle;
 
     // Constructors
-    public Star(AnchorPane space, String name, Double mass, Double temperature, Double radius, Double speed, Double density) {
+    public Star(AnchorPane space, String name, Double temperature, Double radius, Double density, Double mass, Double speed) {
         this.space = space;
         this.x = 0.0;
         this.y = 0.0;
@@ -42,25 +42,14 @@ public class Star implements CuerpoCeleste{
 
         PrincipalController ps = new PrincipalController();
 
-        this.circle.setOnMouseClicked(event -> {
-            ps.seleccionar(this);
+        space.getChildren().add(this.circle);
+
+        circle.setOnMouseClicked(event -> {
+            PrincipalController.seleccionar(this);
             event.consume();
         });
 
-        this.circle.setOnMouseEntered(event -> {
-            if (ps.getSelected() != null) {
-                if (ps.getCreateMode() && ps.getSelected() != this.circle) {
-                    this.circle.setCursor(Cursor.WAIT);
-                } else {
-                    this.circle.setCursor(Cursor.HAND);
-                }
-            } else {
-                this.circle.setCursor(Cursor.HAND);
-            }
-        });
-
-        space.getChildren().add(this.circle);
-
+        circle.setOnMouseEntered(event -> circle.setCursor(Cursor.HAND));
     }
 
     // Getters
@@ -76,8 +65,8 @@ public class Star implements CuerpoCeleste{
         return radius;
     }
 
-    public Double getSpeed() {
-        return speed;
+    public Double[] getSpeed() {
+        return new Double[]{0.0, 0.0};
     }
 
     public Double getDensity() {
