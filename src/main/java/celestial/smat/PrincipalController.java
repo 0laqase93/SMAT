@@ -7,11 +7,11 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
@@ -19,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 
 public class PrincipalController {
@@ -33,6 +34,8 @@ public class PrincipalController {
 
     private Button loadButton;
 
+    private Button saveButton;
+
     private Button addButton;
 
     private Button removeButton;
@@ -46,7 +49,7 @@ public class PrincipalController {
 
     private static AnchorPane space;
 
-    private Button playAnimationButton;
+    public static Button playAnimationButton;
 
     public CuerpoCeleste getSelected() {
         return selected;
@@ -64,13 +67,13 @@ public class PrincipalController {
         return this.window;
     }
 
-    void controlarAnimacion() {
+    public static void controlarAnimacion() {
         if (PhisicsController.animacion) {
-            playAnimationButton.setText("■");
-            PhisicsController.timer.start();
-        } else {
             playAnimationButton.setText("▶");
             PhisicsController.timer.stop();
+        } else {
+            playAnimationButton.setText("■");
+            PhisicsController.timer.start();
         }
 
         PhisicsController.animacion = !PhisicsController.animacion;
@@ -105,7 +108,7 @@ public class PrincipalController {
         object.setCircle(selectedCircle);
     }
 
-    void crear(CuerpoCeleste object) {
+    void crear(CuerpoCeleste object) throws InterruptedException {
         // Panel de creación delante (Para evitar problemas)
         infoPane.getInfoPane().toFront();
 
@@ -236,7 +239,7 @@ public class PrincipalController {
         window.getChildren().add(space);
 
         Star sun = new Star(space, "Sol", 5778.0, 695700.0, 1.408, 1.989e30, 0.0);
-        solarSystem = new SolarSystem(sun);
+        solarSystem = new SolarSystem("Inicial", sun);
         addButton = new Button();
         removeButton = new Button();
 
@@ -269,7 +272,31 @@ public class PrincipalController {
         });
         loadButton.setOnMouseClicked(event -> cargarSistema());
 
-        window.getChildren().add(loadButton);
+        saveButton = new Button();
+        saveButton.setText("Guardar");
+        saveButton.setStyle("-fx-background-color: transparent; " +
+                            "-fx-border-color: white; " +
+                            "-fx-text-fill: white; " +
+                            "-fx-font-family: monospace");
+        saveButton.setLayoutX(window.getPrefWidth() - 160);
+        saveButton.setLayoutY(10);
+        saveButton.setOnMouseEntered(event -> {
+            saveButton.setCursor(Cursor.HAND);
+            saveButton.setStyle("-fx-background-color: transparent; " +
+                                "-fx-border-color: gray; " +
+                                "-fx-text-fill: gray; " +
+                                "-fx-font-family: monospace");
+        });
+        saveButton.setOnMouseExited(event -> {
+            saveButton.setCursor(Cursor.DEFAULT);
+            saveButton.setStyle("-fx-background-color: transparent; " +
+                    "-fx-border-color: white; " +
+                    "-fx-text-fill: white; " +
+                    "-fx-font-family: monospace");
+        });
+        saveButton.setOnMouseClicked(event -> guardarSistema());
+
+        window.getChildren().addAll(loadButton, saveButton);
 
         // Crear objetos.
         // Crear el panel de información.
@@ -331,7 +358,7 @@ public class PrincipalController {
 
         playAnimationButton.setOnMouseClicked(event -> controlarAnimacion());
         playAnimationButton.setOnAction(event -> playAnimationButton.setCursor(Cursor.HAND));
-    }
+}
 
     private void cargarSistema() {
         ArrayList<String> nombres = db.nombresSistemas();
@@ -345,6 +372,27 @@ public class PrincipalController {
                 db.cargarDatos(result.get(), space);
                 PhisicsController.timer.stop();
                 playAnimationButton.setText("▶");
+            }
+        }
+    }
+
+    private void guardarSistema() {
+        PhisicsController.timer.stop();
+        playAnimationButton.setText("▶");
+        TextInputDialog dialog = new TextInputDialog("Sistema33");
+        dialog.setTitle("GUARDAR SISTEMA SOLAR");
+        dialog.setHeaderText("Introduzca el nombre del sistema para la base de datos.");
+        dialog.setContentText("Nombre:");
+        Optional<String> name = dialog.showAndWait();
+        if (name.isPresent()) {
+            if (!name.get().isEmpty()) {
+                db.guardarDatos(name.get());
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Nombre incorrecto");
+                alert.setHeaderText("Parece que el nombre no es correcto.");
+                alert.setContentText("Se debe introducir un nombre para el sistema solar.");
+                alert.showAndWait();
             }
         }
     }

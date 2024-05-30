@@ -103,6 +103,19 @@ public class Star implements CuerpoCeleste{
     }
 
     public void setTemperature(Double temperature) {
+        if (temperature < 2500) {
+            circle.setFill(Color.rgb(160, 84, 12));
+        } else if (temperature < 3500) {
+            circle.setFill(Color.RED);
+        } else if (temperature < 5000) {
+            circle.setFill(Color.ORANGE);
+        } else if (temperature < 6000) {
+            circle.setFill(Color.YELLOW);
+        } else if (temperature < 7500) {
+            circle.setFill(Color.WHITE);
+        } else {
+            circle.setFill(Color.CYAN);
+        }
         this.temperature = temperature;
     }
 

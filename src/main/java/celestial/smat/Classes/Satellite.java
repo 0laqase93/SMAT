@@ -1,13 +1,17 @@
 package celestial.smat.Classes;
 
 import celestial.smat.PrincipalController;
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
+import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
 
-public class Satellite implements CuerpoCeleste {
+import java.util.ArrayList;
+
+public class Satellite implements CuerpoCeleste{
     private AnchorPane space;
 
     private String name;
@@ -42,7 +46,7 @@ public class Satellite implements CuerpoCeleste {
         this.radius = radius;
         this.density = density;
 
-        this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.DARKBLUE);
+        this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.DARKRED);
         circle.setLayoutX(this.x + parent.getCircle().getRadius());
         circle.setLayoutY(this.y);
         circle.setStroke(Color.WHITE);
@@ -146,10 +150,21 @@ public class Satellite implements CuerpoCeleste {
 
     public void setRadius(Double radius) {
         this.radius = radius;
+        circle.setRadius(radius * PhisicsController.ESCALARADIO);
     }
 
     public void setDensity(Double density) {
         this.density = density;
+        // Cálculo del radio usando la fórmula R = (3M / 4πρ)^(1/3)
+        // Convertir densidad de g/cm³ a kg/m³
+        double densityInKgPerM3 = density * 1000;
+
+        // Calcular el radio en metros
+        double radiusInMeters = Math.cbrt((3 * mass) / (4 * Math.PI * densityInKgPerM3));
+
+        // Convertir el radio a kilómetros
+        double radiusInKm = radiusInMeters / 1000;
+        setRadius(radiusInKm);
     }
 
     public void setCircle(Circle circle) {
@@ -196,22 +211,20 @@ public class Satellite implements CuerpoCeleste {
         this.x += this.velocidadX / PhisicsController.PASOTIEMPO;
         this.y += this.velocidadY / PhisicsController.PASOTIEMPO;
 
-
-
         this.circle.setLayoutX(this.x);
         this.circle.setLayoutY(this.y);
     }
 
-    public static Double[] atraccionGravitatoria(Satellite planet, CuerpoCeleste otro) {
+    public static Double[] atraccionGravitatoria(Satellite satellite, CuerpoCeleste otro) {
         Double[] resultado = new Double[2];
 
         // Calcular distancia entre los cuerpos
-        Double distanciaX = (otro.getX() - planet.getX()) / PhisicsController.ESCALA;
-        Double distanciaY = (otro.getY() - planet.getY()) / PhisicsController.ESCALA;
+        Double distanciaX = (otro.getX() - satellite.getX()) / PhisicsController.ESCALA;
+        Double distanciaY = (otro.getY() - satellite.getY()) / PhisicsController.ESCALA;
         Double distancia = Math.sqrt(Math.pow(distanciaX, 2) + Math.pow(distanciaY, 2));
 
         // Fórmula de gravitación universal de Newton
-        Double fuerza = PhisicsController.G * planet.getMass() * otro.getMass() / Math.pow(distancia, 2);
+        Double fuerza = PhisicsController.G * satellite.getMass() * otro.getMass() / Math.pow(distancia, 2);
 
         // Descomposición de fuerzas (trigonometría)
         Double theta = Math.atan2(distanciaY, distanciaX); // Cáĺculo del ángulo

@@ -1,13 +1,15 @@
 package celestial.smat.Classes;
 
 import celestial.smat.PrincipalController;
-import javafx.geometry.Point2D;
+import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.Cursor;
-import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Polyline;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 
@@ -33,7 +35,7 @@ public class Planet implements CuerpoCeleste{
         this.circle = circle;
     }
 
-    public Planet(AnchorPane space, Double distanceSol, String name, Double mass, Double temperature, Double radius, Double speed, Double density, CuerpoCeleste parent) {
+    public Planet(AnchorPane space, Double distanceSol, String name, Double mass, Double temperature, Double radius, Double speed, Double density, CuerpoCeleste parent) throws InterruptedException {
         this.space = space;
         this.x = (distanceSol * PhisicsController.UA) * PhisicsController.ESCALA + parent.getX();
         this.y = parent.getY();
@@ -54,9 +56,10 @@ public class Planet implements CuerpoCeleste{
         space.getChildren().add(circle);
 
         asignarEventos();
+        crearCola();
     }
 
-    public Planet(AnchorPane space, Double x, Double y, String name, Double mass, Double temperature, Double radius, Double speedX, Double speedY, Double density) {
+    public Planet(AnchorPane space, Double x, Double y, String name, Double mass, Double temperature, Double radius, Double speedX, Double speedY, Double density) throws InterruptedException {
         this.space = space;
         this.x = x;
         this.y = y;
@@ -77,6 +80,7 @@ public class Planet implements CuerpoCeleste{
         space.getChildren().add(circle);
 
         asignarEventos();
+        crearCola();
     }
 
     public void asignarEventos() {
@@ -248,4 +252,40 @@ public class Planet implements CuerpoCeleste{
         this.circle.setRadius(this.radius * PhisicsController.ESCALARADIO);
     }
 
+    public void crearCola() {
+        int cantidad = 30; // Número de puntos en la cola
+        double retraso = 0.02; // Retraso entre puntos
+
+        ArrayList<Circle> puntos = new ArrayList<>();
+        for (int i = 0; i < cantidad; i++) {
+            Circle circle = new Circle();
+            circle.setRadius(3);
+            circle.setFill(Color.WHITE);
+            circle.setCenterX(this.x);
+            circle.setCenterY(this.y);
+            puntos.add(circle);
+        }
+
+        Polyline linea = new Polyline();
+        linea.setStroke(Color.WHITE);
+        space.getChildren().add(linea);
+        linea.toBack();
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(retraso), event -> {
+            for (int i = puntos.size() - 1; i > 0; i--) {
+                puntos.get(i).setCenterX(puntos.get(i - 1).getCenterX());
+                puntos.get(i).setCenterY(puntos.get(i - 1).getCenterY());
+            }
+            puntos.get(0).setCenterX(this.circle.getLayoutX());
+            puntos.get(0).setCenterY(this.circle.getLayoutY());
+
+            linea.getPoints().clear();
+            for (Circle punto : puntos) {
+                linea.getPoints().addAll(punto.getCenterX(), punto.getCenterY());
+            }
+        }));
+
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
 }

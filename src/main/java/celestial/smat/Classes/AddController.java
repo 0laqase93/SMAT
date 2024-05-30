@@ -201,9 +201,12 @@ public class AddController {
 
     public void movimientoLanzar(Double x, Double y, String tipo) {
         if (selected != null) {
-            Circle aux = new Circle(69911.0 * PhisicsController.ESCALARADIO);
-            if (tipo.equals("Planet")) aux.setFill(Color.DARKBLUE);
-            else if (tipo.equals("Satellite")) aux.setFill(Color.DARKRED);
+            Circle aux;
+            if (tipo.equals("Planet")) aux = new Circle(69911.0 * PhisicsController.ESCALARADIO, Color.DARKBLUE);
+            else if (tipo.equals("Satellite")) aux = new Circle(69911.0 / 2 * PhisicsController.ESCALARADIO, Color.DARKRED);
+            else {
+                aux = null;
+            }
             aux.setCenterX(x);
             aux.setCenterY(y);
             aux.setStroke(Color.WHITE);
@@ -239,10 +242,15 @@ public class AddController {
                     Double velocidadY = (distanciaY / tiempo) / (3600 * 24);
 
                     if (tipo.equals("Planet")) {
-                        Planet planet = new Planet(space, x, y, "Planet", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
+                        Planet planet = null;
+                        try {
+                            planet = new Planet(space, x, y, "Planet", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                         SolarSystem.addCuerpoCeleste(planet);
                     } else if (tipo.equals("Satellite")) {
-                        Satellite satellite = new Satellite(space, x, y, "Planet", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
+                        Satellite satellite = new Satellite(space, x, y, "Satellite", 1.90e27 / 2, 165.0, 69911.0 / 2, velocidadX, velocidadY, 1.56);
                         SolarSystem.addCuerpoCeleste(satellite);
                     }
                 }
