@@ -2,7 +2,6 @@ package celestial.smat.Classes;
 
 import celestial.smat.PrincipalController;
 import javafx.animation.AnimationTimer;
-import javafx.scene.layout.AnchorPane;
 
 import java.util.ArrayList;
 
@@ -24,6 +23,7 @@ public class CollisionController {
                             if (distancia <= sumaRadios) {
                                 SolarSystem.cuerposCeleste.remove(c1);
                                 PrincipalController.getSpace().getChildren().remove(c1.getCircle());
+                                c1.borrarCola();
                                 continue;
                             }
 
@@ -62,6 +62,7 @@ public class CollisionController {
 
             PrincipalController.getSpace().getChildren().remove(c2.getCircle());
             SolarSystem.cuerposCeleste.remove(c2);
+            c2.borrarCola();
         } else {
             Double[] nuevasVelocidades = cambiarTrayectoria(c2, c1);
             c2.setVelocidadX(nuevasVelocidades[0]);
@@ -70,6 +71,7 @@ public class CollisionController {
 
             PrincipalController.getSpace().getChildren().remove(c1.getCircle());
             SolarSystem.cuerposCeleste.remove(c1);
+            c1.borrarCola();
         }
     }
 

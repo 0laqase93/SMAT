@@ -148,4 +148,6 @@ public class Star implements CuerpoCeleste{
     }
 
     public void actualizarPosicion() { }
+
+    public void borrarCola() {  }
 }

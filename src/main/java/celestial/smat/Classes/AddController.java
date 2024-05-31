@@ -3,8 +3,11 @@ package celestial.smat.Classes;
 import celestial.smat.PrincipalController;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -14,18 +17,22 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AddController {
     private Boolean mostrado;
+    static boolean controlPresionado;
 
     private final AnchorPane menu;
     private final AnchorPane space;
 
     private Group selected;
+    public static Button playButton;
 
     int alturaSaliente = 20;
     int cantidadMostrado = 100;
-    int separacion = 60;
+    int separacion = 65;
     private final Label flecha;
 
     public AddController(AnchorPane window, AnchorPane space) {
@@ -114,7 +121,43 @@ public class AddController {
         opciones.add(planet);
         opciones.add(satellite);
 
-        menu.getChildren().addAll(saliente, flecha, fondo, planetGroup, satelliteGroup);
+        playButton = new Button();
+        playButton.setText("■");
+        playButton.setLayoutX(10);
+        playButton.setLayoutY(50);
+        playButton.setAlignment(Pos.CENTER);
+        playButton.setContentDisplay(ContentDisplay.CENTER);
+        playButton.setPrefWidth(40);
+        playButton.setPrefHeight(40);
+        playButton.setStyle("-fx-background-color: transparent; " +
+                            "-fx-border-color: white; " +
+                            "-fx-text-fill: white; " +
+                            "-fx-font-size: 16px; " +
+                            "-fx-border-radius: 20px; " +
+                            "-fx-padding: -3 0 0 0;");
+
+        playButton.setOnMouseEntered(event -> {
+            playButton.setCursor(Cursor.HAND);
+            playButton.setStyle("-fx-background-color: transparent; " +
+                                "-fx-border-color: gray; " +
+                                "-fx-text-fill: gray; " +
+                                "-fx-font-size: 16px; " +
+                                "-fx-border-radius: 20px; " +
+                                "-fx-padding: -3 0 0 0;");
+        });
+        playButton.setOnMouseExited(event -> {
+            playButton.setCursor(Cursor.DEFAULT);
+            playButton.setStyle("-fx-background-color: transparent; " +
+                                "-fx-border-color: white; " +
+                                "-fx-text-fill: white; " +
+                                "-fx-font-size: 16px;" +
+                                "-fx-border-radius: 20px;" +
+                                "-fx-padding: -3 0 0 0;");
+        });
+
+        playButton.setOnMouseClicked(event -> PrincipalController.controlarAnimacion());
+
+        menu.getChildren().addAll(saliente, flecha, fondo, playButton, planetGroup, satelliteGroup);
     }
 
     public AnchorPane getMenu() {
@@ -186,6 +229,7 @@ public class AddController {
     public void createPlanet() {
         space.setOnMousePressed(event -> {
             if (!event.isControlDown()) {
+                controlPresionado = false;
                 movimientoLanzar(event.getX(), event.getY(), "Planet");
             }
         });
@@ -194,6 +238,7 @@ public class AddController {
     public void createSatellite() {
         space.setOnMousePressed(event -> {
             if (!event.isControlDown()) {
+                controlPresionado = false;
                 movimientoLanzar(event.getX(), event.getY(), "Satellite");
             }
         });
@@ -226,6 +271,8 @@ public class AddController {
                     Double newY = 2 * y - event.getY();
                     linea.setEndX(newX);
                     linea.setEndY(newY);
+                } else {
+                    controlPresionado = true;
                 }
             });
 
@@ -241,18 +288,23 @@ public class AddController {
                     Double velocidadX = (distanciaX / tiempo) / (3600 * 24);
                     Double velocidadY = (distanciaY / tiempo) / (3600 * 24);
 
-                    if (tipo.equals("Planet")) {
-                        Planet planet = null;
-                        try {
-                            planet = new Planet(space, x, y, "Planet", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                    if (selected != null) {
+                        if (tipo.equals("Planet")) {
+                            Planet planet = null;
+                            try {
+                                planet = new Planet(space, x, y, "Planet", 1.90e27, 165.0, 69911.0, velocidadX, velocidadY, 1.33);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            SolarSystem.addCuerpoCeleste(planet);
+                        } else if (tipo.equals("Satellite")) {
+                            Satellite satellite = new Satellite(space, x, y, "Satellite", 1.90e27 / 2, 165.0, 69911.0 / 2, velocidadX, velocidadY, 1.56);
+                            SolarSystem.addCuerpoCeleste(satellite);
                         }
-                        SolarSystem.addCuerpoCeleste(planet);
-                    } else if (tipo.equals("Satellite")) {
-                        Satellite satellite = new Satellite(space, x, y, "Satellite", 1.90e27 / 2, 165.0, 69911.0 / 2, velocidadX, velocidadY, 1.56);
-                        SolarSystem.addCuerpoCeleste(satellite);
                     }
+                } else {
+                    space.getChildren().removeAll(aux, linea);
+                    controlPresionado = false;
                 }
             });
         }

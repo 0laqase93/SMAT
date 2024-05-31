@@ -26,13 +26,13 @@ public class PhisicsController {
                     if (!SolarSystem.cuerposCeleste.isEmpty()) {
                         for (CuerpoCeleste cuerpoCeleste : SolarSystem.cuerposCeleste) {
                             cuerpoCeleste.actualizarPosicion();
-                            if (space.getLayoutX() > cuerpoCeleste.getCircle().getLayoutX()) System.out.println(cuerpoCeleste.getCircle().getLayoutX());
-                            if (cuerpoCeleste.getCircle().getLayoutX() <= space.getLayoutX() ||
-                                    cuerpoCeleste.getCircle().getLayoutY() <= space.getLayoutY() ||
-                                    cuerpoCeleste.getCircle().getLayoutX() + cuerpoCeleste.getCircle().getRadius() * 2 >= space.getPrefWidth() ||
-                                    cuerpoCeleste.getCircle().getLayoutY()  + cuerpoCeleste.getCircle().getRadius() * 2 >= space.getPrefHeight()) {
+                            if (cuerpoCeleste.getCircle().getLayoutX() <= 0 ||
+                                    cuerpoCeleste.getCircle().getLayoutY() <= 0 ||
+                                    cuerpoCeleste.getCircle().getLayoutX() >= space.getPrefWidth() ||
+                                    cuerpoCeleste.getCircle().getLayoutY() >= space.getPrefHeight()) {
                                 space.getChildren().remove(cuerpoCeleste.getCircle());
                                 SolarSystem.cuerposCeleste.remove(cuerpoCeleste);
+                                cuerpoCeleste.borrarCola();
                                 return;
                             }
                         }

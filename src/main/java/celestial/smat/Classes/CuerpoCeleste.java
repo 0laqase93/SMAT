@@ -26,4 +26,6 @@ public interface CuerpoCeleste {
     Circle getCircle();
 
     void setCircle(Circle circle);
+
+    void borrarCola();
 }

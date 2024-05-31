@@ -1,6 +1,8 @@
 package celestial.smat.Classes;
 
 import celestial.smat.PrincipalController;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
@@ -8,6 +10,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Polyline;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 
@@ -26,6 +30,9 @@ public class Satellite implements CuerpoCeleste{
     private Double velocidadY;
 
     private Circle circle;
+    ArrayList<Circle> puntos;
+    Polyline linea;
+    Timeline timeline;
 
     // Constructors
     public Satellite(String name, Circle circle) {
@@ -54,6 +61,7 @@ public class Satellite implements CuerpoCeleste{
         space.getChildren().add(circle);
 
         asignarEventos();
+        crearCola();
     }
 
     public Satellite(AnchorPane space, Double x, Double y, String name, Double mass, Double temperature, Double radius, Double speedX, Double speedY, Double density) {
@@ -77,6 +85,7 @@ public class Satellite implements CuerpoCeleste{
         space.getChildren().add(circle);
 
         asignarEventos();
+        crearCola();
     }
 
     public void asignarEventos() {
@@ -248,4 +257,50 @@ public class Satellite implements CuerpoCeleste{
         this.circle.setRadius(this.radius * PhisicsController.ESCALARADIO);
     }
 
+    public void crearCola() {
+        int cantidad = 30; // Número de puntos en la cola
+        double retraso = 0.03; // Retraso entre puntos
+
+        puntos = new ArrayList<>();
+        for (int i = 0; i < cantidad; i++) {
+            Circle circle = new Circle();
+            circle.setRadius(3);
+            circle.setFill(Color.WHITE);
+            circle.setCenterX(this.x);
+            circle.setCenterY(this.y);
+            puntos.add(circle);
+        }
+
+        linea = new Polyline();
+        linea.setStroke(Color.WHITE);
+        space.getChildren().add(linea);
+        linea.toBack();
+
+        timeline = new Timeline(new KeyFrame(Duration.seconds(retraso), event -> {
+            for (int i = puntos.size() - 1; i > 0; i--) {
+                puntos.get(i).setCenterX(puntos.get(i - 1).getCenterX());
+                puntos.get(i).setCenterY(puntos.get(i - 1).getCenterY());
+            }
+            puntos.get(0).setCenterX(this.circle.getLayoutX());
+            puntos.get(0).setCenterY(this.circle.getLayoutY());
+
+            linea.getPoints().clear();
+            for (Circle punto : puntos) {
+                linea.getPoints().addAll(punto.getCenterX(), punto.getCenterY());
+            }
+        }));
+
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    public void borrarCola() {
+        timeline.stop();
+        for (Circle punto : puntos) {
+            space.getChildren().remove(punto);
+        }
+        puntos.clear();
+        linea.setFill(Color.TRANSPARENT);
+        linea.getPoints().clear();
+    }
 }

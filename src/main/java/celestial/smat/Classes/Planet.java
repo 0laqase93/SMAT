@@ -1,7 +1,6 @@
 package celestial.smat.Classes;
 
 import celestial.smat.PrincipalController;
-import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Cursor;
@@ -28,6 +27,9 @@ public class Planet implements CuerpoCeleste{
     private Double velocidadY;
 
     private Circle circle;
+    ArrayList<Circle> puntos;
+    Polyline linea;
+    Timeline timeline;
 
     // Constructors
     public Planet(String name, Circle circle) {
@@ -154,6 +156,8 @@ public class Planet implements CuerpoCeleste{
 
     public void setRadius(Double radius) {
         this.radius = radius;
+        double volume = (4.0 / 3.0) * Math.PI * Math.pow(this.radius * 1000, 3);
+        this.mass = volume * this.density * 1000;
         circle.setRadius(radius * PhisicsController.ESCALARADIO);
     }
 
@@ -254,9 +258,9 @@ public class Planet implements CuerpoCeleste{
 
     public void crearCola() {
         int cantidad = 30; // Número de puntos en la cola
-        double retraso = 0.02; // Retraso entre puntos
+        double retraso = 0.03; // Retraso entre puntos
 
-        ArrayList<Circle> puntos = new ArrayList<>();
+        puntos = new ArrayList<>();
         for (int i = 0; i < cantidad; i++) {
             Circle circle = new Circle();
             circle.setRadius(3);
@@ -266,12 +270,12 @@ public class Planet implements CuerpoCeleste{
             puntos.add(circle);
         }
 
-        Polyline linea = new Polyline();
+        linea = new Polyline();
         linea.setStroke(Color.WHITE);
         space.getChildren().add(linea);
         linea.toBack();
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(retraso), event -> {
+        timeline = new Timeline(new KeyFrame(Duration.seconds(retraso), event -> {
             for (int i = puntos.size() - 1; i > 0; i--) {
                 puntos.get(i).setCenterX(puntos.get(i - 1).getCenterX());
                 puntos.get(i).setCenterY(puntos.get(i - 1).getCenterY());
@@ -287,5 +291,15 @@ public class Planet implements CuerpoCeleste{
 
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+    }
+
+    public void borrarCola() {
+        timeline.stop();
+        for (Circle punto : puntos) {
+            space.getChildren().remove(punto);
+        }
+        puntos.clear();
+        linea.setFill(Color.TRANSPARENT);
+        linea.getPoints().clear();
     }
 }

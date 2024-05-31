@@ -69,9 +69,11 @@ public class PrincipalController {
 
     public static void controlarAnimacion() {
         if (PhisicsController.animacion) {
+            AddController.playButton.setText("▶");
             playAnimationButton.setText("▶");
             PhisicsController.timer.stop();
         } else {
+            AddController.playButton.setText("■");
             playAnimationButton.setText("■");
             PhisicsController.timer.start();
         }
@@ -328,21 +330,24 @@ public class PrincipalController {
         playAnimationButton.setStyle("-fx-background-color: transparent; " +
                                      "-fx-border-color: white; " +
                                      "-fx-text-fill: white; " +
-                                     "-fx-font-size: 25px");
+                                     "-fx-font-size: 25px;" +
+                                     "-fx-padding: -3 0 0 0;");
 
         playAnimationButton.setOnMouseEntered(event -> {
             playAnimationButton.setCursor(Cursor.HAND);
             playAnimationButton.setStyle("-fx-background-color: transparent; " +
                                          "-fx-border-color: gray; " +
                                          "-fx-text-fill: gray; " +
-                                         "-fx-font-size: 25px");
+                                         "-fx-font-size: 25px;" +
+                                         "-fx-padding: -3 0 0 0;");
         });
         playAnimationButton.setOnMouseExited(event -> {
             playAnimationButton.setCursor(Cursor.DEFAULT);
             playAnimationButton.setStyle("-fx-background-color: transparent; " +
                                          "-fx-border-color: white; " +
                                          "-fx-text-fill: white; " +
-                                         "-fx-font-size: 25px");
+                                         "-fx-font-size: 25px;" +
+                                         "-fx-padding: -3 0 0 0;");
         });
 
         window.getChildren().add(playAnimationButton);

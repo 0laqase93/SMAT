@@ -362,7 +362,6 @@ public class Info {
                 selected.setDensity(density);
             }
 
-            // Cargar y establecer el ícono de "tick"
             Image saveIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/celestial/smat/Images/tickIcon.png")));
             saveIconView.setImage(saveIcon);
 
