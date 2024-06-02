@@ -2,8 +2,11 @@ package celestial.smat.Classes;
 
 import celestial.smat.PrincipalController;
 import javafx.animation.AnimationTimer;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class CollisionController {
     private final boolean activarColision = true;
@@ -17,13 +20,21 @@ public class CollisionController {
                     if (!SolarSystem.cuerposCeleste.isEmpty()) {
                         boolean colision = false;
                         for (CuerpoCeleste c1 : new ArrayList<>(SolarSystem.cuerposCeleste)) {
-                            // Calcular distancia entre el sol y el planeta
                             Double distancia = calcularDistancia(c1, SolarSystem.star);
                             Double sumaRadios = c1.getCircle().getRadius() + SolarSystem.star.getCircle().getRadius();
                             if (distancia <= sumaRadios) {
                                 SolarSystem.cuerposCeleste.remove(c1);
                                 PrincipalController.getSpace().getChildren().remove(c1.getCircle());
                                 c1.borrarCola();
+                                if (c1 instanceof Fragment) {
+                                    continue;
+                                }
+                                try {
+                                    crearFragmentos(c1, SolarSystem.star);
+                                    addSmoke(c1.getX(), c1.getY());
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                }
                                 continue;
                             }
 
@@ -36,7 +47,11 @@ public class CollisionController {
                                 distancia = calcularDistancia(c1, c2);
                                 sumaRadios = c1.getCircle().getRadius() + c2.getCircle().getRadius();
                                 if (distancia <= sumaRadios) {
-                                    manejarColision(c1, c2);
+                                    try {
+                                        manejarColision(c1, c2);
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                     colision = true;
                                     break;
                                 }
@@ -53,25 +68,35 @@ public class CollisionController {
         }
     }
 
-    void manejarColision(CuerpoCeleste c1, CuerpoCeleste c2) {
+    void manejarColision(CuerpoCeleste c1, CuerpoCeleste c2) throws InterruptedException {
         if (c1.getMass() >= c2.getMass()) {
             Double[] nuevasVelocidades = cambiarTrayectoria(c1, c2);
             c1.setVelocidadX(nuevasVelocidades[0]);
             c1.setVelocidadY(nuevasVelocidades[1]);
-            c1.actualizarMasa(c2.getMass());
+            c1.actualizarMasa(c2.getMass() / 2);
 
             PrincipalController.getSpace().getChildren().remove(c2.getCircle());
             SolarSystem.cuerposCeleste.remove(c2);
             c2.borrarCola();
+            if (c1 instanceof Fragment || c2 instanceof Fragment) {
+                return;
+            }
+            crearFragmentos(c2, c1);
+            addSmoke(c2.getX(), c2.getY());
         } else {
             Double[] nuevasVelocidades = cambiarTrayectoria(c2, c1);
             c2.setVelocidadX(nuevasVelocidades[0]);
             c2.setVelocidadY(nuevasVelocidades[1]);
-            c2.actualizarMasa(c1.getMass());
+            c2.actualizarMasa(c1.getMass() / 2);
 
             PrincipalController.getSpace().getChildren().remove(c1.getCircle());
             SolarSystem.cuerposCeleste.remove(c1);
             c1.borrarCola();
+            if (c1 instanceof Fragment || c2 instanceof Fragment) {
+                return;
+            }
+            crearFragmentos(c1, c2);
+            addSmoke(c1.getX(), c1.getY());
         }
     }
 
@@ -99,7 +124,73 @@ public class CollisionController {
         return new Double[]{v1xf / 1000, v1yf / 1000};
     }
 
-    void crearFragmentos() {
+    void crearFragmentos(CuerpoCeleste c1, CuerpoCeleste c2) throws InterruptedException {
+        Random random = new Random();
+        int numFragmentos = 10 + random.nextInt(11);
 
+        // Calcular la masa total de los fragmentos
+        double masaFragmentoTotal = 0.0;
+        for (int i = 0; i < numFragmentos; i++) {
+            masaFragmentoTotal += c1.getMass() * numFragmentos / 10;
+        }
+
+        // Calcular la energía cinética total del cuerpo celeste antes de la colisión
+        double energiaTotalOriginal = 0.5 * c1.getMass() * (c1.getVelocidadX() * c1.getVelocidadX() + c1.getVelocidadY() * c1.getVelocidadY()); // Energía cinética de c1
+
+        // Calcular la energía cinética promedio por fragmento
+        double energiaPromedioPorFragmento = energiaTotalOriginal / numFragmentos;
+
+        for (int i = 0; i < numFragmentos; i++) {
+            // Generar un ángulo aleatorio para cada fragmento
+            double angle = 2 * Math.PI * random.nextDouble();
+
+            // Generar una velocidad aleatoria para el fragmento
+            double speed = Math.sqrt(2 * energiaPromedioPorFragmento / masaFragmentoTotal) * 0.01; // Usamos la fórmula de energía cinética: E = 0.5 * m * v^2
+            double velocidadX = speed * Math.cos(angle);
+            double velocidadY = speed * Math.sin(angle);
+
+            double collisionPointX = (c1.getX() + c2.getX()) / 2;
+            double collisionPointY = (c1.getY() + c2.getY()) / 2;
+            // Desplazar la posición inicial del fragmento ligeramente en la dirección de su velocidad
+            double initialX = collisionPointX + (c1.getCircle().getRadius() / 2) * Math.cos(angle);
+            double initialY = collisionPointY + (c1.getCircle().getRadius() / 2) * Math.sin(angle);
+
+            // Crear el satélite (fragmento) en la posición del cuerpo colisionado
+            Fragment fragmento = new Fragment(PrincipalController.getSpace(), initialX, initialY, "Fragmento", c1.getMass() * 0.1, c1.getTemperature(), c1.getRadius() * 0.1, velocidadX, velocidadY, c1.getDensity()
+            );
+
+            // Añadir el fragmento al sistema solar
+            SolarSystem.cuerposCeleste.add(fragmento);
+            fragmento.getCircle().toBack();
+        }
     }
+
+    void addSmoke(double x, double y) {
+        for (int i = 0; i < 50; i++) {
+            Circle smokeParticle = new Circle(x, y, 3, Color.LIGHTGRAY);
+            smokeParticle.setOpacity(Math.random());
+            PrincipalController.getSpace().getChildren().add(smokeParticle);
+
+            // Animar la partícula de humo para que se disperse gradualmente
+            AnimationTimer smokeAnimation = new AnimationTimer() {
+                double deltaX = (Math.random() - 0.5) * 5; // Movimiento horizontal aleatorio
+                double deltaY = (Math.random() - 0.5) * 5; // Movimiento vertical aleatorio
+                double deltaOpacity = Math.random() * 0.05; // Cambio de opacidad aleatorio
+
+                @Override
+                public void handle(long now) {
+                    smokeParticle.setCenterX(smokeParticle.getCenterX() + deltaX);
+                    smokeParticle.setCenterY(smokeParticle.getCenterY() + deltaY);
+                    smokeParticle.setOpacity(smokeParticle.getOpacity() - deltaOpacity);
+
+                    if (smokeParticle.getOpacity() <= 0) {
+                        PrincipalController.getSpace().getChildren().remove(smokeParticle);
+                        this.stop();
+                    }
+                }
+            };
+            smokeAnimation.start();
+        }
+    }
+
 }

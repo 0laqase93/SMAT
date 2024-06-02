@@ -7,8 +7,10 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -41,6 +43,14 @@ public class PrincipalController {
     private Button removeButton;
 
     private Circle orbitModify;
+
+    private ImageView smatView;
+
+    private AddController menuAgregar;
+
+    private Button startPlayButton;
+
+    private Button startLoadButton;
 
     static Color selectedColor;
 
@@ -110,124 +120,13 @@ public class PrincipalController {
         object.setCircle(selectedCircle);
     }
 
-    void crear(CuerpoCeleste object) throws InterruptedException {
-        // Panel de creación delante (Para evitar problemas)
-        infoPane.getInfoPane().toFront();
-
-        // Variables para el manejo de gráficos.
-        Circle parent = object.getCircle();
-
-        // Parar animación
-        playAnimationButton.setText("⏵");
-        playAnimationButton.setTextFill(Color.WHITE);
-        playAnimationButton.setDisable(true);
-
-        // Creación de planeta.
-        Circle circle = new Circle();
-        circle.setRadius(parent.getRadius() / 2);
-        double num = parent.getLayoutX() + parent.getRadius() * 3;
-        circle.setLayoutX(num);
-        circle.setLayoutY(parent.getLayoutY());
-        circle.setFill(Color.BLUE);
-        circle.setStroke(selectedColor);
-
-        // Creación de la órbita al objeto padre.
-        Ellipse orbit = new Ellipse();
-        double initialRadius = circle.getLayoutX() - parent.getLayoutX();
-        orbit.setRadiusX(initialRadius);
-        orbit.setRadiusY(initialRadius);
-        orbit.setLayoutX(parent.getLayoutX());
-        orbit.setLayoutY(parent.getLayoutY());
-        orbit.setFill(Color.TRANSPARENT);
-        orbit.setStroke(Color.WHITE);
-
-        // Crear el botón para modificar la órbita de forma vertical.
-        orbitModify = new Circle();
-        orbitModify.setRadius(7);
-        orbitModify.setLayoutX(parent.getLayoutX());
-        orbitModify.setLayoutY(parent.getLayoutY() - orbit.getRadiusY());
-        orbitModify.setFill(Color.BLACK);
-        orbitModify.setStroke(Color.WHITE);
-
-        // Eliminar botones de añadir y eliminar antes de la edición.
-        space.getChildren().remove(addButton);
-        space.getChildren().remove(removeButton);
-
-        // Crear y añadir el planeta al sistema solar.
-        Planet planet = new Planet(space, 1.0, "Tierra", 5.972e24, 287.15, 6371.0, 107280.0, 5.51, (Star) solarSystem.getStar());
-        SolarSystem.addCuerpoCeleste(planet);
-
-        // Cambiar el elemento al seleccionado.
-        selected = planet;
-        parent.setStroke(Color.WHITE);
-
-        // Añadir eventos
-        // Añadir evento de selección.
-        circle.setOnMouseClicked(event -> {
-            seleccionar(planet);
-            event.consume();
-        });
-
-        // Añadir evento de clicar y arrastrar al planeta.
-        circle.setOnMouseDragged(event -> {
-            circle.setLayoutX(event.getSceneX());
-            orbit.setRadiusX(circle.getLayoutX() - parent.getLayoutX());
-        });
-
-        // Añadir evento de clicar y arrastrar al botón de modificar la órbita(vertical).
-        orbitModify.setOnMouseDragged(event -> {
-            orbitModify.setLayoutY(event.getSceneY());
-            orbit.setRadiusY(parent.getLayoutY() - orbitModify.getLayoutY());
-        });
-
-        orbitModify.setOnMouseEntered(event -> orbitModify.setCursor(Cursor.HAND));
-
-        // Añadir todos los objetos al espacio.
-        space.getChildren().addAll(orbit, orbitModify);
-
-        // Enviar la órbita al final para evitar problemas.
-        orbit.toBack();
-
-        infoPane.select(planet);
-    }
-
     static void mostrarInfo() {
         infoPane.getInfoPane().toFront();
         infoPane.activar();
     }
 
-    void agregarCirculo() {
-        // Panel de creación delante (Para evitar problemas)
-        infoPane.getInfoPane().toFront();
-
-        // Volvemos a activar el botón de la animación.
-        playAnimationButton.setDisable(false);
-
-        // Variables para el manejo de gráficos.
-        Circle circle = selected.getCircle();
-
-        // Añadir botones.
-        // Botón de añadir.
-        addButton.setLayoutX(circle.getLayoutX() - circle.getRadius() - 15);
-        addButton.setLayoutY(circle.getLayoutY() - circle.getRadius());
-
-        // Botón de eliminar.
-        removeButton.setLayoutX(circle.getLayoutX() + circle.getRadius() - 5);
-        removeButton.setLayoutY(circle.getLayoutY() - circle.getRadius());
-
-        // Añadir botones de añadir y eliminar.
-        space.getChildren().addAll(addButton, removeButton);
-
-        // Eliminar botones de finalizar edición y el modificador de la órbita.
-        space.getChildren().removeAll(orbitModify);
-
-        // Eliminar el evento de edición de la órbita.
-        selected.getCircle().setOnMouseDragged(null);
-    }
-
     @FXML
-    void initialize() {
-        // Asignación de variables iniciales.
+    void initialize() throws InterruptedException {
         assert playAnimationButton != null;
 
         db = new DataBase();
@@ -252,6 +151,8 @@ public class PrincipalController {
         // Botones de guardar y cargar
         loadButton = new Button();
         loadButton.setText("Cargar");
+        loadButton.setDisable(true);
+        loadButton.setOpacity(0);
         loadButton.setStyle("-fx-background-color: transparent; " +
                             "-fx-border-color: white; " +
                             "-fx-text-fill: white; " +
@@ -276,6 +177,8 @@ public class PrincipalController {
 
         saveButton = new Button();
         saveButton.setText("Guardar");
+        saveButton.setDisable(true);
+        saveButton.setOpacity(0);
         saveButton.setStyle("-fx-background-color: transparent; " +
                             "-fx-border-color: white; " +
                             "-fx-text-fill: white; " +
@@ -311,7 +214,8 @@ public class PrincipalController {
         });
 
         // Crear menu de agregar
-        AddController menuAgregar = new AddController(window, space);
+        menuAgregar = new AddController(window, space);
+        menuAgregar.invisible();
         menuAgregar.getMenu().setOnMouseClicked(event -> {
             if (selected != null) {
                 seleccionar(selected);
@@ -320,6 +224,8 @@ public class PrincipalController {
         });
 
         playAnimationButton = new Button();
+        playAnimationButton.setDisable(true);
+        playAnimationButton.setOpacity(0);
         playAnimationButton.setText("■");
         playAnimationButton.setLayoutX(10);
         playAnimationButton.setLayoutY(window.getPrefHeight() - 70);
@@ -363,7 +269,106 @@ public class PrincipalController {
 
         playAnimationButton.setOnMouseClicked(event -> controlarAnimacion());
         playAnimationButton.setOnAction(event -> playAnimationButton.setCursor(Cursor.HAND));
+
+        Image SMAT = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/celestial/smat/Images/SMAT.png")));
+        smatView = new ImageView(SMAT);
+        smatView.setLayoutX(0);
+        smatView.setLayoutY(13);
+
+        window.getChildren().add(smatView);
+
+        Planet planet = new Planet(space, 1.0,"Inicio", 1.90e27, 165.0, 69911.0, 29.0, 1.33, sun);
+        SolarSystem.addCuerpoCeleste(planet);
+
+        startPlayButton = new Button();
+        startPlayButton.setText("Jugar");
+        startPlayButton.setLayoutX(window.getPrefWidth() / 2 - 118);
+        startPlayButton.setLayoutY(window.getPrefHeight() / 2 - 37);
+        startPlayButton.setAlignment(Pos.CENTER);
+        startPlayButton.setContentDisplay(ContentDisplay.CENTER);
+        startPlayButton.setStyle("-fx-background-color: BLACK; " +
+                                 "-fx-border-color: white; " +
+                                 "-fx-text-fill: white; " +
+                                 "-fx-font-size: 40px;" +
+                                 "-fx-padding: 10 12 12 12; " +
+                                 "-fx-font-family: spaceman; " +
+                                 "-fx-border-radius: 20px; " +
+                                 "-fx-background-radius: 20px");
+
+        startPlayButton.setOnMouseEntered(event -> {
+            startPlayButton.setCursor(Cursor.HAND);
+            startPlayButton.setStyle("-fx-background-color: BLACK; " +
+                                     "-fx-border-color: gray; " +
+                                     "-fx-text-fill: gray; " +
+                                     "-fx-font-size: 40px;" +
+                                     "-fx-padding: 10 12 12 12; " +
+                                     "-fx-font-family: spaceman; " +
+                                     "-fx-border-radius: 20px; " +
+                                     "-fx-background-radius: 20px");
+        });
+        startPlayButton.setOnMouseExited(event -> {
+            startPlayButton.setCursor(Cursor.DEFAULT);
+            startPlayButton.setStyle("-fx-background-color: BLACK; " +
+                                     "-fx-border-color: white; " +
+                                     "-fx-text-fill: white; " +
+                                     "-fx-font-size: 40px;" +
+                                     "-fx-padding: 10 12 12 12; " +
+                                     "-fx-font-family: spaceman; " +
+                                     "-fx-border-radius: 20px; " +
+                                     "-fx-background-radius: 20px");
+        });
+
+        startPlayButton.setOnMouseClicked(event -> startSimulation());
+
+        window.getChildren().add(startPlayButton);
+
+        startLoadButton = new Button();
+        startLoadButton.setText("Cargar");
+        startLoadButton.setLayoutX(window.getPrefWidth() / 2 - 140);
+        startLoadButton.setLayoutY(window.getPrefHeight() / 2 + 160);
+        startLoadButton.setAlignment(Pos.CENTER);
+        startLoadButton.setContentDisplay(ContentDisplay.CENTER);
+        startLoadButton.setStyle("-fx-background-color: BLACK; " +
+                                 "-fx-border-color: white; " +
+                                 "-fx-text-fill: white; " +
+                                 "-fx-font-size: 40px;" +
+                                 "-fx-padding: 10 12 12 12; " +
+                                 "-fx-font-family: spaceman; " +
+                                 "-fx-border-radius: 20px; " +
+                                 "-fx-background-radius: 20px");
+
+        startLoadButton.setOnMouseEntered(event -> {
+            startLoadButton.setCursor(Cursor.HAND);
+            startLoadButton.setStyle("-fx-background-color: BLACK; " +
+                                     "-fx-border-color: gray; " +
+                                     "-fx-text-fill: gray; " +
+                                     "-fx-font-size: 40px;" +
+                                     "-fx-padding: 10 12 12 12; " +
+                                     "-fx-font-family: spaceman; " +
+                                     "-fx-border-radius: 20px; " +
+                                     "-fx-background-radius: 20px");
+        });
+        startLoadButton.setOnMouseExited(event -> {
+            startLoadButton.setCursor(Cursor.DEFAULT);
+            startLoadButton.setStyle("-fx-background-color: BLACK; " +
+                                     "-fx-border-color: white; " +
+                                     "-fx-text-fill: white; " +
+                                     "-fx-font-size: 40px;" +
+                                     "-fx-padding: 10 12 12 12; " +
+                                     "-fx-font-family: spaceman; " +
+                                     "-fx-border-radius: 20px; " +
+                                     "-fx-background-radius: 20px");
+        });
+
+        startLoadButton.setOnMouseClicked(event -> cargarBoton());
+
+        window.getChildren().add(startLoadButton);
 }
+
+    private void cargarBoton() {
+        cargarSistema();
+        startSimulation();
+    }
 
     private void cargarSistema() {
         ArrayList<String> nombres = db.nombresSistemas();
@@ -401,4 +406,42 @@ public class PrincipalController {
             }
         }
     }
+
+    private void startSimulation() {
+        smatView.setDisable(true);
+        fadeOut(smatView, 0.5);
+
+        startPlayButton.setDisable(true);
+        fadeOut(startPlayButton, 0.5);
+
+        startLoadButton.setDisable(true);
+        fadeOut(startLoadButton, 0.5);
+
+        menuAgregar.visible();
+
+        loadButton.setDisable(false);
+        fadeIn(loadButton, 0.5);
+
+        saveButton.setDisable(false);
+        fadeIn(saveButton, 0.5);
+
+        playAnimationButton.setDisable(false);
+        fadeIn(playAnimationButton, 0.5);
+    }
+
+
+    private void fadeIn(Node node, double durationInSeconds) {
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(durationInSeconds), node);
+        fadeTransition.setFromValue(0);
+        fadeTransition.setToValue(1);
+        fadeTransition.play();
+    }
+
+    private void fadeOut(Node node, double durationInSeconds) {
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(durationInSeconds), node);
+        fadeTransition.setFromValue(1);
+        fadeTransition.setToValue(0);
+        fadeTransition.play();
+    }
+
 }

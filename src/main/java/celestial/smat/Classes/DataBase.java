@@ -15,7 +15,7 @@ public class DataBase {
     public static Connection con;
 
     public DataBase() {
-        con = crearConexion("33006", "SMATDB", "root", "root");
+        con = crearConexion("33006", "SMATDB", "root", "dbrootpass");
     }
 
     public ArrayList<String> nombresSistemas() {

@@ -55,3 +55,21 @@ CREATE TABLE IF NOT EXISTS satellite (
     solarSystemId INT NOT NULL,
     CONSTRAINT fk_solarSystem_satellite FOREIGN KEY (solarSystemId) REFERENCES solarSystem (id)
 );
+
+CREATE TABLE IF NOT EXISTS fragment
+(
+    id            int auto_increment
+        primary key,
+    name          varchar(255) not null,
+    temperature   double       null,
+    radius        double       null,
+    density       double       null,
+    mass          double       null,
+    x             double       null,
+    y             double       null,
+    xSpeed        double       null,
+    ySpeed        double       null,
+    solarSystemId int          not null,
+    constraint fk_solarSystem_fragment
+        foreign key (solarSystemId) references solarSystem (id)
+);

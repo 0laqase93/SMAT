@@ -309,4 +309,14 @@ public class AddController {
             });
         }
     }
+
+    public void invisible() {
+        menu.setDisable(true);
+        menu.setVisible(false);
+    }
+
+    public void visible() {
+        menu.setDisable(false);
+        menu.setVisible(true);
+    }
 }
