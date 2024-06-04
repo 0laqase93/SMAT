@@ -6,41 +6,41 @@ El link del proyecto se puede encontrar en https://github.com/0laqase93/SMAT
 **SMAT** (Stellar Mission Analysis Tool) es una aplicación de **simulación 
 de órbitas espaciales** para la clase de DAM hecha en **Java y javaFx** que 
 permite a los usuarios explorar y visualizar el movimiento de cuerpos 
-celestes en el espacio. Utilizando las leyes de la física (_Se va a intentar_), la 
+celestes en el espacio. Utilizando las leyes de la física (Newton). La 
 aplicación simula el movimiento de planetas, satélites y otros objetos celestes 
 **alrededor de una estrella central**.
 
 ## Características
 ### 1. Creación de Sistemas Estelares
-- Permitir a los usuarios **crear sistemas** estelares con una estrella 
+- Se puede **crear sistemas** estelares con una estrella 
   central y múltiples planetas y/o satélites.
-- **Especificar las características** de cada cuerpo celeste, como su masa, 
-  radio, posición inicial y velocidad.
-### 2. Simulación de Órbitas
-- **Realizar orbitas** de forma automática.
-### 3. Visualización Interactiva
-- Proporcionar una **interfaz gráfica** interactiva utilizando **JavaFX** para 
-  visualizar los cuerpos celestes y sus órbitas.
-- Permitir a los usuarios **pausar y reanudar**.
-### 4. Análisis de Datos
-- Mostrar **información detallada sobre cada cuerpo celeste**, incluyendo su posición, 
-  planeta al que orbita, etc.
-- Permitir a los usuarios **analizar y comparar** diferentes aspectos de las órbitas 
-  de los cuerpos celestes en el sistema.
-### 5. Personalización Avanzada
-- Permitir a los usuarios **guardar y cargar configuraciones** de sistemas estelares 
-  para su posterior uso.
+![](Images/1.png)  
 
-## Opciones Adicionales
-### 1. Visualización 3D
-- Implementar una **visualización 3D** de los sistemas estelares y sus órbitas para una 
-- experiencia más inmersiva.
-### 2. Educación y Divulgación
-- Incluir **documentación** del funcionamiento el sistema y **manuales de física** para 
-  comprender como funcionan las órbitas de forma básica.
-### 3. Exploración del Espacio Exterior
+- **Modificar las características** de cada cuerpo celeste, como su densidad, 
+  radio, temperatura, nombre y velocidad.
+![](Images/2.png)  
+
+### 2. Simulación de Órbitas
+- **Realizar orbitas** con el lanzamiento del planeta.
+![](Images/3.png)  
+
+### 3. Visualización Interactiva
+- Función de poder **pausar y reanudar** la animación de los cuerpos.
+![](Images/4.png)  
+
+### 4. Personalización Avanzada
+- Permitir a los usuarios **guardar y cargar configuraciones** de sistemas estelares 
+  para su posterior uso o modificación con el nombre del sistema solar como referencia.
+![](Images/5.png)  
+
+### 6. Exploración del Espacio Exterior
 - Se asignarán sistemas **solares de prueba** para que el usuario pueda cargarlos y ver algunos 
   modelos que se pueden.
+![](Images/6.png)  
+
+### 7. Colisiones
+- Se ha creado una simulación muy básica sobre la colisión entre dos cuerpos celestes.
+- Cuando colisionan expulsan fragmentos con sus físicas y polvo que no tiene ningún tipo de relevancia en la simulación.
 
 ## Curiosidad
 El nombre SMAT hace referencia al programa que usa la NASA para 

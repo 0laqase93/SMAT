@@ -35,7 +35,7 @@ public class Star implements CuerpoCeleste{
         this.density = density;
 
 
-        this.circle = new Circle(radius * PhisicsController.ESCALARADIO * 0.03, Color.YELLOW);
+        this.circle = new Circle(radius * PhisicsController.RADIUSSCALE * 0.03, Color.YELLOW);
         this.circle.setLayoutX(x + space.getPrefWidth() / 2);
         this.circle.setLayoutY(y + space.getPrefHeight() / 2);
         this.circle.setStroke(Color.WHITE);

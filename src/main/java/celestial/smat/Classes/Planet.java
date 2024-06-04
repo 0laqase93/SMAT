@@ -39,7 +39,7 @@ public class Planet implements CuerpoCeleste{
 
     public Planet(AnchorPane space, Double distanceSol, String name, Double mass, Double temperature, Double radius, Double speed, Double density, CuerpoCeleste parent) throws InterruptedException {
         this.space = space;
-        this.x = (distanceSol * PhisicsController.UA) * PhisicsController.ESCALA + parent.getX();
+        this.x = (distanceSol * PhisicsController.UA) * PhisicsController.SCALE + parent.getX();
         this.y = parent.getY();
         this.velocidadX = 0.0;
         this.velocidadY = speed * 1000;
@@ -50,7 +50,7 @@ public class Planet implements CuerpoCeleste{
         this.radius = radius;
         this.density = density;
 
-        this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.DARKBLUE);
+        this.circle = new Circle(radius * PhisicsController.RADIUSSCALE, Color.DARKBLUE);
         circle.setLayoutX(this.x + parent.getCircle().getRadius());
         circle.setLayoutY(this.y);
         circle.setStroke(Color.WHITE);
@@ -74,7 +74,7 @@ public class Planet implements CuerpoCeleste{
         this.radius = radius;
         this.density = density;
 
-        this.circle = new Circle(radius * PhisicsController.ESCALARADIO, Color.DARKBLUE);
+        this.circle = new Circle(radius * PhisicsController.RADIUSSCALE, Color.DARKBLUE);
         circle.setLayoutX(this.x);
         circle.setLayoutY(this.y);
         circle.setStroke(Color.WHITE);
@@ -158,7 +158,7 @@ public class Planet implements CuerpoCeleste{
         this.radius = radius;
         double volume = (4.0 / 3.0) * Math.PI * Math.pow(this.radius * 1000, 3);
         this.mass = volume * this.density * 1000;
-        circle.setRadius(radius * PhisicsController.ESCALARADIO);
+        circle.setRadius(radius * PhisicsController.RADIUSSCALE);
     }
 
     public void setDensity(Double density) {
@@ -213,11 +213,11 @@ public class Planet implements CuerpoCeleste{
 
         // Cálculo de la aceleración
         // f = m * a > a = f / m
-        this.velocidadX += fuerzaTotalX / this.mass * PhisicsController.PASOTIEMPO;
-        this.velocidadY += fuerzaTotalY / this.mass * PhisicsController.PASOTIEMPO;
+        this.velocidadX += fuerzaTotalX / this.mass * PhisicsController.TIMESTEP;
+        this.velocidadY += fuerzaTotalY / this.mass * PhisicsController.TIMESTEP;
 
-        this.x += this.velocidadX / PhisicsController.PASOTIEMPO;
-        this.y += this.velocidadY / PhisicsController.PASOTIEMPO;
+        this.x += this.velocidadX / PhisicsController.TIMESTEP;
+        this.y += this.velocidadY / PhisicsController.TIMESTEP;
 
         this.circle.setLayoutX(this.x);
         this.circle.setLayoutY(this.y);
@@ -227,8 +227,8 @@ public class Planet implements CuerpoCeleste{
         Double[] resultado = new Double[2];
 
         // Calcular distancia entre los cuerpos
-        Double distanciaX = (otro.getX() - planet.getX()) / PhisicsController.ESCALA;
-        Double distanciaY = (otro.getY() - planet.getY()) / PhisicsController.ESCALA;
+        Double distanciaX = (otro.getX() - planet.getX()) / PhisicsController.SCALE;
+        Double distanciaY = (otro.getY() - planet.getY()) / PhisicsController.SCALE;
         Double distancia = Math.sqrt(Math.pow(distanciaX, 2) + Math.pow(distanciaY, 2));
 
         // Fórmula de gravitación universal de Newton
@@ -253,7 +253,7 @@ public class Planet implements CuerpoCeleste{
         this.mass += masa;
         Double densidadKgM3 = this.density * 1000; // Convertir densidad de g/cm^3 a kg/m^3
         this.radius = Math.pow((3 * this.mass) / (4 * Math.PI * densidadKgM3), 1.0 / 3.0) / 1000; // Convertir el radio a kilómetros
-        this.circle.setRadius(this.radius * PhisicsController.ESCALARADIO);
+        this.circle.setRadius(this.radius * PhisicsController.RADIUSSCALE);
     }
 
     public void crearCola() {

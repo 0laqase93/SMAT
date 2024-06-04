@@ -46,6 +46,7 @@ public class DataBase {
 
         for (CuerpoCeleste cuerpo : PrincipalController.solarSystem.getPlanets()) {
             space.getChildren().remove(cuerpo.getCircle());
+            cuerpo.borrarCola();
         }
 
         Statement st = null;
@@ -104,6 +105,24 @@ public class DataBase {
                 Satellite satellite = new Satellite(space, x, y, name, mass, temperature, radius, xSpeed / 1000, ySpeed / 1000, density);
                 SolarSystem.addCuerpoCeleste(satellite);
             }
+
+            // Cargar fragmentos
+            sql = "SELECT s.* FROM solarSystem ss INNER JOIN fragment s ON ss.id = s.solarSystemId WHERE ss.name LIKE '" + nombre + "';";
+            rs = st.executeQuery(sql);
+            while (rs.next()) {
+                String name = rs.getString("name");
+                Double temperature = rs.getDouble("temperature");
+                Double radius = rs.getDouble("radius");
+                Double density = rs.getDouble("density");
+                Double mass = rs.getDouble("mass");
+                Double x = rs.getDouble("x");
+                Double y = rs.getDouble("y");
+                Double xSpeed = rs.getDouble("xSpeed");
+                Double ySpeed = rs.getDouble("ySpeed");
+
+                Fragment fragment = new Fragment(space, x, y, name, mass, temperature, radius, xSpeed / 1000, ySpeed / 1000, density);
+                SolarSystem.addCuerpoCeleste(fragment);
+            }
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -145,7 +164,10 @@ public class DataBase {
                 // Si el usuario confirma la sobrescritura, actualizar los planetas y satélites asociados
                 if (result.isPresent() && result.get() == si) {
                     for (CuerpoCeleste object : PrincipalController.solarSystem.getPlanets()) {
-                        String cuerpoCelesteType = (object instanceof Planet) ? "planet" : "satellite";
+                        String cuerpoCelesteType = "";
+                        if (object instanceof Planet) cuerpoCelesteType = "planet";
+                        else if (object instanceof Satellite) cuerpoCelesteType = "satellite";
+                        else if (object instanceof Fragment) cuerpoCelesteType = "fragment";
                         sql = "UPDATE " + cuerpoCelesteType + " SET name = ?, temperature = ?, radius = ?, density = ?, mass = ?, x = ?, y = ?, xSpeed = ?, ySpeed = ? WHERE solarSystemId = (SELECT id FROM solarSystem WHERE name LIKE ?)";
                         ps = con.prepareStatement(sql);
                         ps.setString(1, object.getName());
@@ -228,8 +250,21 @@ public class DataBase {
                         ps.setDouble(8, object.getVelocidadX());
                         ps.setDouble(9, object.getVelocidadY());
                         ps.setInt(10, id);
-                    } else {
+                    } else if (object instanceof Satellite){
                         sql = "INSERT INTO satellite (name, temperature, radius, density, mass, x, y, xSpeed, ySpeed, solarSystemId) VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        ps = con.prepareStatement(sql);
+                        ps.setString(1, object.getName());
+                        ps.setDouble(2, object.getTemperature());
+                        ps.setDouble(3, object.getRadius());
+                        ps.setDouble(4, object.getDensity());
+                        ps.setDouble(5, object.getMass());
+                        ps.setDouble(6, object.getX());
+                        ps.setDouble(7, object.getY());
+                        ps.setDouble(8, object.getVelocidadX());
+                        ps.setDouble(9, object.getVelocidadY());
+                        ps.setInt(10, id);
+                    } else {
+                        sql = "INSERT INTO fragment (name, temperature, radius, density, mass, x, y, xSpeed, ySpeed, solarSystemId) VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                         ps = con.prepareStatement(sql);
                         ps.setString(1, object.getName());
                         ps.setDouble(2, object.getTemperature());

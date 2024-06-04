@@ -11,6 +11,7 @@ import java.util.Random;
 public class CollisionController {
     private final boolean activarColision = true;
     private static AnimationTimer timer;
+    public static AnimationTimer smokeAnimation;
 
     public CollisionController() {
         if (activarColision) {
@@ -31,7 +32,6 @@ public class CollisionController {
                                 }
                                 try {
                                     crearFragmentos(c1, SolarSystem.star);
-                                    addSmoke(c1.getX(), c1.getY());
                                 } catch (InterruptedException e) {
                                     throw new RuntimeException(e);
                                 }
@@ -82,7 +82,6 @@ public class CollisionController {
                 return;
             }
             crearFragmentos(c2, c1);
-            addSmoke(c2.getX(), c2.getY());
         } else {
             Double[] nuevasVelocidades = cambiarTrayectoria(c2, c1);
             c2.setVelocidadX(nuevasVelocidades[0]);
@@ -96,7 +95,6 @@ public class CollisionController {
                 return;
             }
             crearFragmentos(c1, c2);
-            addSmoke(c1.getX(), c1.getY());
         }
     }
 
@@ -163,25 +161,34 @@ public class CollisionController {
             SolarSystem.cuerposCeleste.add(fragmento);
             fragmento.getCircle().toBack();
         }
+
+        addSmoke(c1);
     }
 
-    void addSmoke(double x, double y) {
-        for (int i = 0; i < 50; i++) {
+    void addSmoke(CuerpoCeleste c) {
+        int smokeParticles = (int)c.getCircle().getRadius() * 5;
+        double x = c.getX();
+        double y = c.getY();
+        for (int i = 0; i < smokeParticles; i++) {
             Circle smokeParticle = new Circle(x, y, 3, Color.LIGHTGRAY);
             smokeParticle.setOpacity(Math.random());
             PrincipalController.getSpace().getChildren().add(smokeParticle);
 
-            // Animar la partícula de humo para que se disperse gradualmente
-            AnimationTimer smokeAnimation = new AnimationTimer() {
-                double deltaX = (Math.random() - 0.5) * 5; // Movimiento horizontal aleatorio
-                double deltaY = (Math.random() - 0.5) * 5; // Movimiento vertical aleatorio
-                double deltaOpacity = Math.random() * 0.05; // Cambio de opacidad aleatorio
+            smokeAnimation = new AnimationTimer() {
+                double deltaX = (Math.random() - 0.5) * 5;
+                double deltaY = (Math.random() - 0.5) * 5;
+                double deltaOpacity = Math.random() * 0.05;
 
                 @Override
                 public void handle(long now) {
                     smokeParticle.setCenterX(smokeParticle.getCenterX() + deltaX);
                     smokeParticle.setCenterY(smokeParticle.getCenterY() + deltaY);
                     smokeParticle.setOpacity(smokeParticle.getOpacity() - deltaOpacity);
+
+                    if (smokeParticle.getCenterX() <= 0 || smokeParticle.getCenterY() <= 0 || smokeParticle.getCenterX() >= PrincipalController.getSpace().getPrefWidth() || smokeParticle.getCenterY() >= PrincipalController.getSpace().getPrefHeight()) {
+                        PrincipalController.getSpace().getChildren().remove(smokeParticle);
+                        this.stop();
+                    }
 
                     if (smokeParticle.getOpacity() <= 0) {
                         PrincipalController.getSpace().getChildren().remove(smokeParticle);

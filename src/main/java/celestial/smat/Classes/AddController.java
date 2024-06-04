@@ -17,8 +17,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class AddController {
     private Boolean mostrado;
@@ -247,8 +245,8 @@ public class AddController {
     public void movimientoLanzar(Double x, Double y, String tipo) {
         if (selected != null) {
             Circle aux;
-            if (tipo.equals("Planet")) aux = new Circle(69911.0 * PhisicsController.ESCALARADIO, Color.DARKBLUE);
-            else if (tipo.equals("Satellite")) aux = new Circle(69911.0 / 2 * PhisicsController.ESCALARADIO, Color.DARKRED);
+            if (tipo.equals("Planet")) aux = new Circle(69911.0 * PhisicsController.RADIUSSCALE, Color.DARKBLUE);
+            else if (tipo.equals("Satellite")) aux = new Circle(69911.0 / 2 * PhisicsController.RADIUSSCALE, Color.DARKRED);
             else {
                 aux = null;
             }
@@ -281,9 +279,9 @@ public class AddController {
                     space.getChildren().remove(linea);
                     space.getChildren().remove(aux);
 
-                    Double tiempo = PhisicsController.PASOTIEMPO;
-                    Double distanciaX = (linea.getEndX() - linea.getStartX()) / PhisicsController.ESCALA;
-                    Double distanciaY = (linea.getEndY() - linea.getStartY()) / PhisicsController.ESCALA;
+                    Double tiempo = PhisicsController.TIMESTEP;
+                    Double distanciaX = (linea.getEndX() - linea.getStartX()) / PhisicsController.SCALE;
+                    Double distanciaY = (linea.getEndY() - linea.getStartY()) / PhisicsController.SCALE;
 
                     Double velocidadX = (distanciaX / tiempo) / (3600 * 24);
                     Double velocidadY = (distanciaY / tiempo) / (3600 * 24);

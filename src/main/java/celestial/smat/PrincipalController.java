@@ -4,20 +4,15 @@ package celestial.smat;
 import celestial.smat.Classes.*;
 import javafx.animation.*;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Ellipse;
-import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -81,10 +76,12 @@ public class PrincipalController {
         if (PhisicsController.animacion) {
             AddController.playButton.setText("▶");
             playAnimationButton.setText("▶");
+            if (CollisionController.smokeAnimation != null) CollisionController.smokeAnimation.stop();
             PhisicsController.timer.stop();
         } else {
             AddController.playButton.setText("■");
             playAnimationButton.setText("■");
+            if (CollisionController.smokeAnimation != null) CollisionController.smokeAnimation.start();
             PhisicsController.timer.start();
         }
 
@@ -143,6 +140,31 @@ public class PrincipalController {
         solarSystem = new SolarSystem("Inicial", sun);
         addButton = new Button();
         removeButton = new Button();
+
+        /*// Planeta Mercurio
+        Planet mercurio = new Planet(space, 0.39, "Mercurio", 3.285e23, 440.0, 2439.7, 47.87, 5427.0, sun);
+        SolarSystem.addCuerpoCeleste(mercurio);
+        // Planeta Venus
+        Planet venus = new Planet(space, 0.72, "Venus", 4.867e24, 737.0, 6051.8, 35.02, 5243.0, sun);
+        SolarSystem.addCuerpoCeleste(venus);
+        // Planeta Tierra
+        Planet tierra = new Planet(space, 1.0, "Tierra", 5.972e24, 288.0, 6371.0, 29.78, 5514.0, sun);
+        SolarSystem.addCuerpoCeleste(tierra);
+        // Planeta Marte
+        Planet marte = new Planet(space, 1.52, "Marte", 6.39e23, 210.0, 3389.5, 24.07, 3933.0, sun);
+        SolarSystem.addCuerpoCeleste(marte);
+        // Planeta Júpiter
+        Planet jupiter = new Planet(space, 5.2, "Júpiter", 1.898e27, 165.0, 69911.0, 13.07, 1326.0, sun);
+        SolarSystem.addCuerpoCeleste(jupiter);
+        // Planeta Saturno
+        Planet saturno = new Planet(space, 9.58, "Saturno", 5.683e26, 134.0, 58232.0, 9.69, 687.0, sun);
+        SolarSystem.addCuerpoCeleste(saturno);
+        // Planeta Urano
+        Planet urano = new Planet(space, 19.18, "Urano", 8.681e25, 76.0, 25362.0, 6.81, 1271.0, sun);
+        SolarSystem.addCuerpoCeleste(urano);
+        // Planeta Neptuno
+        Planet neptuno = new Planet(space, 30.07, "Neptuno", 1.024e26, 72.0, 24622.0, 5.43, 1638.0, sun);
+        SolarSystem.addCuerpoCeleste(neptuno);*/
 
         // Selección de la estrella default.
         selected = sun;
@@ -409,39 +431,37 @@ public class PrincipalController {
 
     private void startSimulation() {
         smatView.setDisable(true);
-        fadeOut(smatView, 0.5);
+        fadeOut(smatView);
 
         startPlayButton.setDisable(true);
-        fadeOut(startPlayButton, 0.5);
+        fadeOut(startPlayButton);
 
         startLoadButton.setDisable(true);
-        fadeOut(startLoadButton, 0.5);
+        fadeOut(startLoadButton);
 
         menuAgregar.visible();
 
         loadButton.setDisable(false);
-        fadeIn(loadButton, 0.5);
+        fadeIn(loadButton);
 
         saveButton.setDisable(false);
-        fadeIn(saveButton, 0.5);
+        fadeIn(saveButton);
 
         playAnimationButton.setDisable(false);
-        fadeIn(playAnimationButton, 0.5);
+        fadeIn(playAnimationButton);
     }
 
-
-    private void fadeIn(Node node, double durationInSeconds) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(durationInSeconds), node);
+    private void fadeIn(Node node) {
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.5), node);
         fadeTransition.setFromValue(0);
         fadeTransition.setToValue(1);
         fadeTransition.play();
     }
 
-    private void fadeOut(Node node, double durationInSeconds) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(durationInSeconds), node);
+    private void fadeOut(Node node) {
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.5), node);
         fadeTransition.setFromValue(1);
         fadeTransition.setToValue(0);
         fadeTransition.play();
     }
-
 }
