@@ -32,26 +32,21 @@ public class Fragment implements CuerpoCeleste{
     Timeline timeline;
 
     // Constructors
-    public Fragment(String name, Circle circle) {
-        this.name = name;
-        this.circle = circle;
-    }
-
-    public Fragment(AnchorPane space, Double distanceSol, String name, Double mass, Double temperature, Double radius, Double speed, Double density, CuerpoCeleste parent) throws InterruptedException {
+    public Fragment(AnchorPane space, Double x, Double y, String name, Double mass, Double temperature, Double speedX, Double speedY, Double density) throws InterruptedException {
         this.space = space;
-        this.x = (distanceSol * PhisicsController.UA) * PhisicsController.SCALE + parent.getX();
-        this.y = parent.getY();
-        this.velocidadX = 0.0;
-        this.velocidadY = speed * 1000;
+        this.x = x;
+        this.y = y;
+        this.velocidadX = speedX * 1000;
+        this.velocidadY = speedY * 1000;
 
         this.name = name;
         this.mass = mass;
         this.temperature = temperature;
-        this.radius = radius;
-        this.density = density;
+        this.circle = new Circle();
+        this.setDensity(density);
 
-        this.circle = new Circle(radius * PhisicsController.RADIUSSCALE, Color.DARKBLUE);
-        circle.setLayoutX(this.x + parent.getCircle().getRadius());
+        this.circle = new Circle(radius * PhisicsController.RADIUSSCALE, Color.ORANGE);
+        circle.setLayoutX(this.x);
         circle.setLayoutY(this.y);
         circle.setStroke(Color.WHITE);
 

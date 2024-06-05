@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS satellite (
     CONSTRAINT fk_solarSystem_satellite FOREIGN KEY (solarSystemId) REFERENCES solarSystem (id)
 );
 
+-- Crear la tabla fragment
 CREATE TABLE IF NOT EXISTS fragment
 (
     id            int auto_increment

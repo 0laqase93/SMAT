@@ -23,6 +23,7 @@ public class CollisionController {
                         for (CuerpoCeleste c1 : new ArrayList<>(SolarSystem.cuerposCeleste)) {
                             Double distancia = calcularDistancia(c1, SolarSystem.star);
                             Double sumaRadios = c1.getCircle().getRadius() + SolarSystem.star.getCircle().getRadius();
+
                             if (distancia <= sumaRadios) {
                                 SolarSystem.cuerposCeleste.remove(c1);
                                 PrincipalController.getSpace().getChildren().remove(c1.getCircle());
@@ -69,7 +70,23 @@ public class CollisionController {
     }
 
     void manejarColision(CuerpoCeleste c1, CuerpoCeleste c2) throws InterruptedException {
+
         if (c1.getMass() >= c2.getMass()) {
+            if (c1 instanceof Fragment) {
+                Double[] nuevasVelocidades = cambiarTrayectoria(c2, c1);
+                c2.setVelocidadX(nuevasVelocidades[0]);
+                c2.setVelocidadY(nuevasVelocidades[1]);
+                c2.actualizarMasa(c1.getMass() / 2);
+
+                PrincipalController.getSpace().getChildren().remove(c1.getCircle());
+                SolarSystem.cuerposCeleste.remove(c1);
+                c1.borrarCola();
+                if (c1 instanceof Fragment || c2 instanceof Fragment) {
+                    return;
+                }
+                crearFragmentos(c1, c2);
+                return;
+            }
             Double[] nuevasVelocidades = cambiarTrayectoria(c1, c2);
             c1.setVelocidadX(nuevasVelocidades[0]);
             c1.setVelocidadY(nuevasVelocidades[1]);
@@ -127,6 +144,7 @@ public class CollisionController {
         int numFragmentos = 10 + random.nextInt(11);
 
         // Calcular la masa total de los fragmentos
+        double fragmentMass = (c1.getMass() / 2) / numFragmentos;
         double masaFragmentoTotal = 0.0;
         for (int i = 0; i < numFragmentos; i++) {
             masaFragmentoTotal += c1.getMass() * numFragmentos / 10;
@@ -154,7 +172,31 @@ public class CollisionController {
             double initialY = collisionPointY + (c1.getCircle().getRadius() / 2) * Math.sin(angle);
 
             // Crear el satélite (fragmento) en la posición del cuerpo colisionado
-            Fragment fragmento = new Fragment(PrincipalController.getSpace(), initialX, initialY, "Fragmento", c1.getMass() * 0.1, c1.getTemperature(), c1.getRadius() * 0.1, velocidadX, velocidadY, c1.getDensity()
+            Fragment fragmento = new Fragment(PrincipalController.getSpace(), initialX, initialY, "Fragmento", fragmentMass, c1.getTemperature(), velocidadX, velocidadY, c1.getDensity()
+            );
+
+            // Añadir el fragmento al sistema solar
+            SolarSystem.cuerposCeleste.add(fragmento);
+            fragmento.getCircle().toBack();
+        }
+
+        for (int i = 0; i < numFragmentos; i++) {
+            // Generar un ángulo aleatorio para cada fragmento
+            double angle = 2 * Math.PI * random.nextDouble();
+
+            // Generar una velocidad aleatoria para el fragmento
+            double speed = Math.sqrt(2 * energiaPromedioPorFragmento / masaFragmentoTotal) * 0.01; // Usamos la fórmula de energía cinética: E = 0.5 * m * v^2
+            double velocidadX = speed * Math.cos(angle);
+            double velocidadY = speed * Math.sin(angle);
+
+            double collisionPointX = (c1.getX() + c2.getX()) / 2;
+            double collisionPointY = (c1.getY() + c2.getY()) / 2;
+            // Desplazar la posición inicial del fragmento ligeramente en la dirección de su velocidad
+            double initialX = collisionPointX + (c1.getCircle().getRadius() / 2000) * Math.cos(angle);
+            double initialY = collisionPointY + (c1.getCircle().getRadius() / 2000) * Math.sin(angle);
+
+            // Crear el satélite (fragmento) en la posición del cuerpo colisionado
+            Fragment fragmento = new Fragment(PrincipalController.getSpace(), initialX, initialY, "Fragmento", fragmentMass / 10, c1.getTemperature(), velocidadX, velocidadY, c1.getDensity()
             );
 
             // Añadir el fragmento al sistema solar
